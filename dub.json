@@ -1,0 +1,11 @@
+{
+	"description": "A minimal D application.",
+	"license": "GPL-3.0-or-later",
+	"authors": [
+		"Aloïs BOURGEOIS",
+		"Eric-Nicolas BRIEAU",
+		"Loan ROHOU"
+	],
+	"copyright": "Copyright © 2026, Aloïs BOURGEOIS, Eric-Nicolas BRIEAU, Loan ROHOU",
+	"name": "mss"
+}
