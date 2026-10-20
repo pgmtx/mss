@@ -1,5 +1,9 @@
 module mss.core.matrix.block;
 
-class Block
+immutable class Block
 {
+    long topLeft;
+    long topRight;
+    long bottomLeft;
+    long bottomRight;
 }

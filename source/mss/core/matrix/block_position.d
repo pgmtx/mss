@@ -1,5 +1,13 @@
 module mss.core.matrix.block_position;
 
-class BlockPosition
+immutable class BlockPosition
 {
+    int row;
+    int column;
+
+    this(int row, int column)
+    {
+        this.row = row;
+        this.column = column;
+    }
 }

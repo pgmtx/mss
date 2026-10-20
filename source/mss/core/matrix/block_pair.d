@@ -1,5 +1,9 @@
 module mss.core.matrix.block_pair;
 
-class BlockPair
+import mss.core.matrix.block;
+
+immutable class BlockPair
 {
+    Block first;
+    Block second;
 }
