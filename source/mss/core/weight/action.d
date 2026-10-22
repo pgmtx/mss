@@ -1,6 +1,7 @@
 module mss.core.weight.action;
 
 import mss.core.matrix.acquisition_mode;
+import mss.core.matrix.matrix_size;
 
 enum Action
 {
@@ -35,19 +36,19 @@ enum Action
     outScalar,
 }
 
-Action acquisition(AcquisitionMode mode, int size)
+Action acquisition(AcquisitionMode mode, MatrixSize size)
 {
     // placeholder
     return Action.puAdd;
 }
 
-Action storeMatrix(int size)
+Action storeMatrix(MatrixSize size)
 {
     // placeholder
     return Action.puAdd;
 }
 
-Action showMatrix(int size)
+Action showMatrix(MatrixSize size)
 {
     // placeholder
     return Action.puAdd;
