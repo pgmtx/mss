@@ -1,5 +1,9 @@
 module mss.core.weight.component_category;
 
-class ComponentCategory
+enum ComponentCategory
 {
+    processingUnit,
+    memory,
+    inputManager,
+    outputController
 }
