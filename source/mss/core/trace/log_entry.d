@@ -1,5 +1,13 @@
 module mss.core.trace.log_entry;
 
-class LogEntry
+import mss.core.weight : Action;
+
+immutable class LogEntry
 {
+    int number;
+    Action action;
+    string component;
+    int weight;
+    long total;
+    string context;
 }
