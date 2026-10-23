@@ -5,8 +5,15 @@ import mss.core.matrix.acquisition_mode;
 
 class InputMatrix
 {
-    string name;
-    Matrix matrix;
-    AcquisitionMode mode;
-    string source;
+    InputMatrix withValues(Matrix matrix) pure nothrow
+    {
+        // placeholder
+        return new InputMatrix;
+    }
+
+private:
+    string _name;
+    Matrix _matrix;
+    AcquisitionMode _mode;
+    string _source;
 }
