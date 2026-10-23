@@ -5,10 +5,15 @@ import mss.core.matrix.acquisition_mode;
 
 class InputMatrix
 {
-    InputMatrix withValues(Matrix matrix) pure nothrow
+    InputMatrix withValues(Matrix matrix) const pure nothrow
     {
         // placeholder
         return new InputMatrix;
+    }
+
+    AcquisitionMode getMode() const pure nothrow
+    {
+        return _mode;
     }
 
 private:

@@ -7,14 +7,14 @@ import mss.core.matrix.block_position;
 
 interface Memory
 {
-    void storeMatrix(string name, Matrix matrix);
+    void storeMatrix(const string name, Matrix matrix);
 
-    Matrix allocate(string name, MatrixSize size);
-    void free(string name);
+    Matrix allocate(const string name, MatrixSize size);
+    void free(const string name);
 
-    Block loadBlock(string name, BlockPosition position);
-    void writeBlock(string name, BlockPosition position, Block block);
+    Block loadBlock(const string name, BlockPosition position);
+    void writeBlock(const string name, BlockPosition position, Block block);
 
-    Matrix read(string name);
-    bool contains(string name);
+    Matrix read(const string name);
+    bool contains(const string name);
 }
