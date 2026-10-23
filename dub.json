@@ -1,5 +1,5 @@
 {
-	"description": "A minimal D application.",
+	"description": "Simulateur de performance de systèmes virtuels",
 	"license": "GPL-3.0-or-later",
 	"authors": [
 		"Aloïs BOURGEOIS",
