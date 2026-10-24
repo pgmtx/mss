@@ -17,3 +17,14 @@ enum ErrorCode
     Err13,
     Err14,
 }
+
+bool isBeforeRun(ErrorCode code)
+{
+    switch (code)
+    {
+    case ErrorCode.Err01: .. case ErrorCode.Err10:
+        return true;
+    default:
+        return false;
+    }
+}
