@@ -101,4 +101,9 @@ private:
     Memory _memory;
     InputManager _inputManager;
     OutputController _outputController;
+
+    void _processingInstruction()
+    {
+        // placeholder
+    }
 }
