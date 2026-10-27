@@ -11,5 +11,5 @@ interface InputManager
     Matrix readCsv(string path);
     Matrix enterMatrix(MatrixSize size);
     Matrix generateRandom(MatrixSize size);
-    Matrix acquire(InputMatrix input);
+    Matrix acquire(const InputMatrix input);
 }

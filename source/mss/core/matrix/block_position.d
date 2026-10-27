@@ -1,15 +1,9 @@
 module mss.core.matrix.block_position;
 
-immutable class BlockPosition
+immutable struct BlockPosition
 {
-    int row;
-    int column;
-
-    this(int row, int column)
-    {
-        this.row = row;
-        this.column = column;
-    }
+    size_t row;
+    size_t column;
 
     string label(const string name) const pure
     {

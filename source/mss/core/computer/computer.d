@@ -72,7 +72,7 @@ class Computer
         return _processingUnit.swap(block, cell1, cell2);
     }
 
-    Block swap(Block block1, BlockCell cell1, Block block2, BlockCell cell2)
+    BlockPair swap(Block block1, BlockCell cell1, Block block2, BlockCell cell2)
     {
         return _processingUnit.swap(block1, cell1, block2, cell2);
     }

@@ -8,22 +8,22 @@ enum MatrixSize
     s16 = 16
 }
 
-int getSide(MatrixSize size)
+size_t getSide(MatrixSize size) pure
 {
     return size;
 }
 
-int getBlocksPerSide(MatrixSize size)
+size_t getBlocksPerSide(MatrixSize size) pure
 {
     return size / 2;
 }
 
-int getBlockCount(MatrixSize size)
+size_t getBlockCount(MatrixSize size) pure
 {
     return size * size / 4;
 }
 
-MatrixSize fromSide(int n)
+MatrixSize fromSide(size_t n)
 {
     import std.conv : to, ConvException;
     import mss.core.error.invalid_matrix_exception;

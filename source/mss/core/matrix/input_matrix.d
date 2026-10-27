@@ -16,6 +16,11 @@ class InputMatrix
         return _mode;
     }
 
+    Matrix getMatrix() const pure nothrow
+    {
+        return _matrix;
+    }
+
 private:
     string _name;
     Matrix _matrix;

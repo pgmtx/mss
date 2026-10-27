@@ -2,7 +2,7 @@ module mss.core.matrix.block_pair;
 
 import mss.core.matrix.block;
 
-immutable class BlockPair
+const struct BlockPair
 {
     Block first;
     Block second;

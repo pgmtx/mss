@@ -6,9 +6,9 @@ import mss.core.trace.trace_step;
 
 interface OutputController
 {
-    void showMessage(string text);
-    void showError(MssException exception);
-    void showTraceStep(TraceStep step);
-    void showMatrix(string name, Matrix matrix);
-    void showScalar(string name, long value);
+    void showMessage(const string text);
+    void showError(const MssException exception);
+    void showTraceStep(const TraceStep step);
+    void showMatrix(const string name, Matrix matrix);
+    void showScalar(const string name, long value);
 }

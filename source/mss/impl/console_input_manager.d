@@ -1,7 +1,7 @@
 module mss.impl.console_input_manager;
 
 import mss.core.component : InputManager;
-import mss.core.matrix : InputMatrix, Matrix, MatrixSize, MatrixRules;
+import mss.core.matrix;
 import std.stdio : readfln, write, writeln;
 
 class ConsoleInputManager : InputManager
@@ -39,13 +39,13 @@ class ConsoleInputManager : InputManager
 
         immutable content = readText(path);
         immutable values = csvReader!long(content).map!(r => r.array).array;
-        return new Matrix(values);
+        return Matrix.of(values);
     }
 
     Matrix enterMatrix(MatrixSize size)
     {
         // placeholder
-        return new Matrix([[0, 0], [0, 0]]);
+        return Matrix.of([[0, 0], [0, 0]]);
     }
 
     Matrix generateRandom(MatrixSize size)
@@ -53,19 +53,18 @@ class ConsoleInputManager : InputManager
         import std.random : uniform;
 
         long[][] values = new long[][](size, size);
-        foreach (i; 0 .. cast(int) size)
+        foreach (i; 0 .. getSide(size))
         {
-            foreach (j; 0 .. cast(int) size)
+            foreach (j; 0 .. getSide(size))
             {
                 values[i][j] = uniform(MatrixRules.minValue, MatrixRules.maxValue + 1);
             }
         }
-        return new Matrix(values);
+        return Matrix.of(values);
     }
 
-    Matrix acquire(InputMatrix input)
+    Matrix acquire(const InputMatrix input)
     {
-        // placeholder
-        return new Matrix([[0, 0], [0, 0]]);
+        return input.getMatrix();
     }
 }

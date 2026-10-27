@@ -21,9 +21,9 @@ static:
         immutable validSizes = [
             MatrixSize.s2, MatrixSize.s4, MatrixSize.s8, MatrixSize.s16
         ];
-        enforce!InvalidMatrixException(validSizes.canFind(matrix.values.length),
+        enforce!InvalidMatrixException(validSizes.canFind(matrix.getRowsCount()),
                 "invalid number of rows");
-        enforce!InvalidMatrixException(validSizes.canFind(matrix.values[0].length),
+        enforce!InvalidMatrixException(validSizes.canFind(matrix.getColumnsCount()),
                 "invalid number of columns");
     }
 
