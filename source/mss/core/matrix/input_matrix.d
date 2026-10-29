@@ -16,9 +16,9 @@ class InputMatrix
         return _mode;
     }
 
-    Matrix getMatrix() const pure nothrow
+    Matrix getMatrix() const
     {
-        return _matrix;
+        return _matrix.copy();
     }
 
 private:

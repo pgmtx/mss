@@ -6,11 +6,22 @@ import mss.core.matrix.block_position;
 import mss.core.matrix.matrix_size;
 import mss.core.matrix.matrix_rules;
 
-const class Matrix
+class Matrix
 {
+    this(MatrixSize size)
+    {
+        _size = size;
+        _values = new long[][](size, size);
+    }
+
     static Matrix of(const long[][] values)
     {
         return new Matrix(values);
+    }
+
+    Matrix copy() const
+    {
+        return new Matrix(_values);
     }
 
     Matrix withBlock(BlockPosition position, Block block) const
@@ -122,6 +133,6 @@ const class Matrix
     }
 
 private:
-    MatrixSize _size;
-    long[][] _values;
+    const MatrixSize _size;
+    const long[][] _values;
 }

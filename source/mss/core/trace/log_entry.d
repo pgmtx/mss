@@ -2,7 +2,7 @@ module mss.core.trace.log_entry;
 
 import mss.core.weight : Action;
 
-immutable class LogEntry
+immutable struct LogEntry
 {
     int number;
     Action action;

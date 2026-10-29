@@ -6,10 +6,11 @@ import mss.core.trace.sub_total;
 
 class ExecutionLog
 {
-    LogEntry record(Action action, ComponentModel model, const string context) const pure nothrow
+    LogEntry record(Action action, ComponentModel model, const string context) nothrow
     {
-        // placeholder
-        return new LogEntry;
+        auto entry = LogEntry(1, action, model.name, model.getWeight(action), _total, context);
+        _entries ~= entry;
+        return entry;
     }
 
     long getTotal() const pure nothrow

@@ -7,6 +7,16 @@ import mss.core.component;
 
 class Computer
 {
+    this(ComputerModel model, ComponentFactory factory)
+    {
+        immutable mode = AcquisitionMode.manual;
+        _model = model;
+        _processingUnit = factory.createProcessingUnit(mode);
+        _memory = factory.createMemory(mode);
+        _inputManager = factory.createInputManager(mode);
+        _outputController = factory.createOutputController(mode);
+    }
+
     void acquire(InputMatrix[] inputs) pure nothrow
     {
         // placeholder

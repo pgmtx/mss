@@ -44,7 +44,17 @@ class ConsoleInputManager : InputManager
 
     Matrix enterMatrix(MatrixSize size)
     {
-        // placeholder
+        import std.format : format;
+
+        auto values = new long[][](size, size);
+        foreach (i, ref row; values)
+        {
+            foreach (j, ref value; row)
+            {
+                immutable prompt = format("M(%d,%d) = ", i + 1, j + 1);
+                value = readInt(prompt, MatrixRules.minValue, MatrixRules.maxValue);
+            }
+        }
         return Matrix.of([[0, 0], [0, 0]]);
     }
 
@@ -52,12 +62,12 @@ class ConsoleInputManager : InputManager
     {
         import std.random : uniform;
 
-        long[][] values = new long[][](size, size);
-        foreach (i; 0 .. getSide(size))
+        auto values = new long[][](size, size);
+        foreach (i, ref row; values)
         {
-            foreach (j; 0 .. getSide(size))
+            foreach (j, ref value; row)
             {
-                values[i][j] = uniform(MatrixRules.minValue, MatrixRules.maxValue + 1);
+                value = uniform(MatrixRules.minValue, MatrixRules.maxValue + 1);
             }
         }
         return Matrix.of(values);

@@ -5,13 +5,12 @@ import mss.core.weight.action;
 
 immutable class ComponentModel
 {
-    int getWeight(Action action)
+    int getWeight(Action action) pure nothrow
     {
         // placeholder
         return 0;
     }
 
-private:
     string name;
     WeightTable weights;
     bool predefined;
