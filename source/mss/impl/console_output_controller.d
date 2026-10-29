@@ -4,7 +4,7 @@ import mss.core.component : OutputController;
 import mss.core.error : MssException;
 import mss.core.matrix : Matrix;
 import mss.core.trace : TraceStep;
-import std.stdio : write;
+import std.stdio : write, writeln, writefln;
 
 class ConsoleOutputController : OutputController
 {
@@ -20,7 +20,8 @@ class ConsoleOutputController : OutputController
 
     void showTraceStep(const TraceStep step)
     {
-
+        writefln("%s | %s | %s", step.computer, step.label, "");
+        writeln("Résultat P : ", step.results[0]);
     }
 
     void showMatrix(const string name, Matrix matrix)

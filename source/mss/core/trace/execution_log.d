@@ -23,10 +23,20 @@ class ExecutionLog
         return _entries;
     }
 
-    SubTotal[Action] subtotals() const pure nothrow
+    SubTotal[Action] subtotals() const pure
     {
-        // placeholder
-        return [Action.puAdd: new SubTotal];
+        SubTotal[Action] result;
+        foreach (entry; _entries)
+        {
+            result.require(entry.action, SubTotal(
+                entry.action,
+                entry.component,
+                entry.number,
+                entry.weight,
+                entry.total
+            ));
+        }
+        return result;
     }
 
 private:

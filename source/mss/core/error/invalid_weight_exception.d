@@ -5,8 +5,8 @@ import mss.core.error.mss_exception;
 
 class InvalidWeightException : MssException
 {
-    this(const string file = __FILE__, size_t line = __LINE__)
+    this(const string message, const string file = __FILE__, size_t line = __LINE__)
     {
-        super("invalid weight", ErrorCode.Err05, file, line);
+        super(message, ErrorCode.Err05, file, line);
     }
 }

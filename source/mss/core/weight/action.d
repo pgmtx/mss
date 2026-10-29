@@ -10,9 +10,9 @@ enum Action
     puMultiply,
     puSwap,
     puSum,
+
     memLoadBlock,
     memWriteBlock,
-
     memStoreMatrix2,
     memStoreMatrix4,
     memStoreMatrix8,

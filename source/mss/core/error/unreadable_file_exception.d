@@ -5,8 +5,8 @@ import mss.core.error.mss_exception;
 
 class UnreadableFileException : MssException
 {
-    this(const string filename, const string file = __FILE__, size_t line = __LINE__)
+    this(const string message, const string file = __FILE__, size_t line = __LINE__)
     {
-        super("unreachable csv: " ~ filename, ErrorCode.Err02, file, line);
+        super(message, ErrorCode.Err02, file, line);
     }
 }

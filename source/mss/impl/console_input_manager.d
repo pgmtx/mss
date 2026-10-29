@@ -32,13 +32,26 @@ class ConsoleInputManager : InputManager
 
     Matrix readCsv(const string path)
     {
+        import mss.core.error : UnreadableFileException;
         import std.algorithm : map;
         import std.array : array;
-        import std.csv : csvReader;
-        import std.file : readText;
+        import std.csv : CSVException, csvReader;
+        import std.file : FileException, readText;
 
-        immutable content = readText(path);
-        immutable values = csvReader!long(content).map!(r => r.array).array;
+        long[][] values;
+        try
+        {
+            immutable content = readText(path);
+            values = csvReader!long(content).map!(r => r.array).array;
+        }
+        catch (FileException _)
+        {
+            throw new UnreadableFileException("could not read the file " ~ path);
+        }
+        catch (CSVException _)
+        {
+            throw new UnreadableFileException("could not parse the file " ~ path);
+        }
         return Matrix.of(values);
     }
 

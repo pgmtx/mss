@@ -2,7 +2,7 @@ module mss.core.trace.sub_total;
 
 import mss.core.weight : Action;
 
-immutable class SubTotal
+immutable struct SubTotal
 {
     Action action;
     string component;
