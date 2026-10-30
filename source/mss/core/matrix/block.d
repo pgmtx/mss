@@ -2,7 +2,7 @@ module mss.core.matrix.block;
 
 import mss.core.matrix.block_cell;
 
-struct Block
+immutable struct Block
 {
     this(long topLeft, long topRight, long bottomLeft, long bottomRight) pure
     {
@@ -46,11 +46,10 @@ struct Block
     string toString() const
     {
         import std.conv : to;
-        return [_topLeft, _topRight, _bottomLeft, _bottomRight].to!string();
+        return to!string([_topLeft, _topRight, _bottomLeft, _bottomRight]);
     }
 
 private:
-immutable
     long _topLeft;
     long _topRight;
     long _bottomLeft;

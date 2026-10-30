@@ -6,11 +6,21 @@ import mss.execution.result_kind;
 
 immutable class PlanStep
 {
-    int position;
-    OperationType type;
-    string[] inputNames;
-    string resultName;
-    ResultKind expectedKind;
-    Matrix expectedMatrix;
-    long expectedScalar;
+    bool hasReference() pure nothrow
+    {
+        // placeholder
+        return false;
+    }
+
+private:
+    int _position;
+    OperationType _operation;
+    string[] _inputNames;
+    string _resultName;
+
+    // Either[Matrix, long] ???
+
+    ResultKind _expectedKind;
+    Matrix _expectedMatrix;
+    long _expectedScalar;
 }
