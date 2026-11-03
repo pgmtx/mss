@@ -1,9 +1,6 @@
 module mss.core.matrix.block_pair;
 
 import mss.core.matrix.block;
+import std.typecons : Tuple;
 
-const struct BlockPair
-{
-    Block first;
-    Block second;
-}
+alias BlockPair = Tuple!(Block, "first", Block, "second");

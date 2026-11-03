@@ -1,11 +1,15 @@
 {
 	"description": "Simulateur de performance de systèmes virtuels",
-	"license": "GPL-3.0-or-later",
+	"dependencies": {
+		"optional": "~>1.3.1",
+		"either": "~>1.1.3"
+	},
 	"authors": [
 		"Aloïs BOURGEOIS",
 		"Eric-Nicolas BRIEAU",
 		"Loan ROHOU"
 	],
 	"copyright": "Copyright © 2026, Aloïs BOURGEOIS, Eric-Nicolas BRIEAU, Loan ROHOU",
+	"license": "GPL-3.0-or-later",
 	"name": "mss"
 }

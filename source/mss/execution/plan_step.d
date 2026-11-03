@@ -4,12 +4,43 @@ import mss.core.matrix : Matrix;
 import mss.execution.operation_type;
 import mss.execution.result_kind;
 
-immutable class PlanStep
+import optional : Optional, some, none;
+import either : Either;
+
+const class PlanStep
 {
+    this(int position, OperationType operation, const string[] inputNames, const string resultName) pure nothrow
+    {
+        _position = position;
+        _operation = operation;
+        _inputNames = inputNames;
+        _resultName = resultName;
+        _expectedValue = none;
+    }
+
+    this(int position, OperationType operation, const string[] inputNames,
+            const string resultName, Matrix expectedMatrix) pure nothrow
+    {
+        _position = position;
+        _operation = operation;
+        _inputNames = inputNames;
+        _resultName = resultName;
+        _expectedValue = some(Either!(Matrix, long)(expectedMatrix));
+    }
+
+    this(int position, OperationType operation, const string[] inputNames,
+            const string resultName, long expectedScalar) pure nothrow
+    {
+        _position = position;
+        _operation = operation;
+        _inputNames = inputNames;
+        _resultName = resultName;
+        _expectedValue = some(Either!(Matrix, long)(expectedScalar));
+    }
+
     bool hasReference() pure nothrow
     {
-        // placeholder
-        return false;
+        return _expectedValue != none;
     }
 
 private:
@@ -18,9 +49,8 @@ private:
     string[] _inputNames;
     string _resultName;
 
-    // Either[Matrix, long] ???
-
-    ResultKind _expectedKind;
-    Matrix _expectedMatrix;
-    long _expectedScalar;
+    // On utilise Optional car la valeur de référence est facultative.
+    // Either assure que l'on utilise un seul type.
+    // Cela évite aussi les valeurs invalides.
+    Optional!(Either!(Matrix, long)) _expectedValue;
 }

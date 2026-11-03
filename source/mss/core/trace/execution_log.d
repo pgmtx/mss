@@ -28,13 +28,8 @@ class ExecutionLog
         SubTotal[Action] result;
         foreach (entry; _entries)
         {
-            result.require(entry.action, SubTotal(
-                entry.action,
-                entry.component,
-                entry.number,
-                entry.weight,
-                entry.total
-            ));
+            result.require(entry.action, SubTotal(entry.action,
+                    entry.component, entry.number, entry.weight, entry.total));
         }
         return result;
     }

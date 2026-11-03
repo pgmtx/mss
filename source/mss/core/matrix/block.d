@@ -46,6 +46,7 @@ immutable struct Block
     string toString() const
     {
         import std.conv : to;
+
         return to!string([_topLeft, _topRight, _bottomLeft, _bottomRight]);
     }
 
