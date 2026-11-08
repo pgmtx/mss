@@ -73,8 +73,6 @@ private:
     // C'est pour cela qu'on peut utiliser un static assert.
     Block _operateOnBlocks(string operator)(Block a, Block b)
     {
-        static assert(operator == "+" || operator == "-" || operator == "*");
-
         // dfmt off
         return Block(
             _calculateWithOverflowCheck!(operator)(a, b, BlockCell.topLeft),
@@ -100,7 +98,7 @@ private:
         }
         catch (Throw.CheckFailure)
         {
-            throw new OverflowException(ErrorCode.Err11);
+            throw OverflowException.badComputation();
         }
     }
 }
