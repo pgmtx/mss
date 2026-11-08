@@ -2,28 +2,87 @@ module mss.impl.standard_processing_unit;
 
 import mss.core.matrix : Block, BlockCell, BlockPair;
 import mss.core.error : OverflowException;
-import std.checkedint : checked, Throw;
+import core.checkedint : adds, subs, muls;
+
+version (unittest)
+{
+    import std.exception : assertThrown;
+}
 
 class StandardProcessingUnit
 {
     Block add(Block a, Block b)
     {
-        return _operateOnBlocks!"+"(a, b);
+        // dfmt off
+        return Block(
+            _checkedAdd(a.topLeft, b.topLeft),
+            _checkedAdd(a.topRight, b.topRight),
+            _checkedAdd(a.bottomLeft, b.bottomLeft),
+            _checkedAdd(a.bottomRight, b.bottomRight)
+        );
+        // dfmt on
+    }
+
+    unittest
+    {
+        auto pu = new StandardProcessingUnit;
+        immutable a = Block(-19, 80, -45, 23);
+        immutable b = Block(20, 41, 66, -14);
+        immutable c = Block(1, 121, 21, 9);
+        assert(pu.add(a, b) == c);
+        assertThrown!OverflowException(pu.add(Block(long.max, 2, 3, 7), Block(1, 2, 3, 4)));
     }
 
     Block substract(Block a, Block b)
     {
-        return _operateOnBlocks!"-"(a, b);
+        // dfmt off
+        return Block(
+            _checkedSub(a.topLeft, b.topLeft),
+            _checkedSub(a.topRight, b.topRight),
+            _checkedSub(a.bottomLeft, b.bottomLeft),
+            _checkedSub(a.bottomRight, b.bottomRight)
+        );
+        // dfmt on
+    }
+
+    unittest
+    {
+        auto pu = new StandardProcessingUnit;
+        immutable a = Block(48, 98, -39, 70);
+        immutable b = Block(74, 79, 25, -62);
+        immutable c = Block(-26, 19, -64, 132);
+        assert(pu.substract(a, b) == c);
+        assertThrown!OverflowException(pu.substract(Block(long.min, 2, 3, 7), Block(1, 2, 3, 4)));
     }
 
     Block multiply(Block a, Block b)
     {
-        return _operateOnBlocks!"*"(a, b);
+        // dfmt off
+        return Block(
+            _checkedMulAdd(a.topLeft, b.topLeft, a.topRight, b.bottomLeft),
+            _checkedMulAdd(a.topLeft, b.topRight, a.topRight, b.bottomRight),
+            _checkedMulAdd(a.bottomLeft, b.topLeft, a.bottomRight, b.bottomLeft),
+            _checkedMulAdd(a.bottomLeft, b.topRight, a.bottomRight, b.bottomRight)
+        );
+        // dfmt on
+    }
+
+    unittest
+    {
+        auto pu = new StandardProcessingUnit;
+        immutable a = Block(25, -68, -38, -4);
+        immutable b = Block(-9, 22, 18, -16);
+        immutable c = Block(-1449, 1638, 270, -772);
+        assert(pu.multiply(a, b) == c);
+        assertThrown!OverflowException(pu.multiply(Block(long.max, 2, 3, 7), Block(2, 2, 3, 4)));
     }
 
     Block swap(Block block, BlockCell cell1, BlockCell cell2)
     {
-        return block.withCell(cell1, block.get(cell2)).withCell(cell2, block.get(cell1));
+        // dfmt off
+        return block.withCell(cell1, block.get(cell2))
+                    .withCell(cell2, block.get(cell1));
+        // dfmt on
     }
 
     unittest
@@ -61,44 +120,54 @@ class StandardProcessingUnit
 
     Block sum(Block block)
     {
-        // dfmt off
-        immutable s = block.get(BlockCell.topLeft) + block.get(BlockCell.topRight)
-                    + block.get(BlockCell.bottomLeft) + block.get(BlockCell.bottomRight);
-        // dfmt on
-        return Block(s, 0, 0, 0);
+        import std.traits : EnumMembers;
+
+        long cellSum = 0;
+        foreach (cell; EnumMembers!BlockCell)
+        {
+            cellSum = _checkedAdd(cellSum, block.get(cell));
+        }
+        return Block(cellSum, 0, 0, 0);
+    }
+
+    unittest
+    {
+        auto pu = new StandardProcessingUnit;
+        immutable block = Block(-82, -56, 57, -15);
+        assert(pu.sum(block) == Block(-96, 0, 0, 0));
+        immutable block2 = Block(long.max / 2, long.max / 2, 1, 2);
+        assertThrown!OverflowException(pu.sum(block2));
     }
 
 private:
-    // `operator` est une valeur qui doit être connue à la compilation.
-    // C'est pour cela qu'on peut utiliser un static assert.
-    Block _operateOnBlocks(string operator)(Block a, Block b) const
+    long _checkedMulAdd(long a, long b, long c, long d)
     {
-        // dfmt off
-        return Block(
-            _calculateWithOverflowCheck!(operator)(a, b, BlockCell.topLeft),
-            _calculateWithOverflowCheck!(operator)(a, b, BlockCell.topRight),
-            _calculateWithOverflowCheck!(operator)(a, b, BlockCell.bottomLeft),
-            _calculateWithOverflowCheck!(operator)(a, b, BlockCell.bottomRight)
-        );
-        // dfmt on
+        return _checkedAdd(_checkedMul(a, b), _checkedMul(c, d));
     }
 
-    long _calculateWithOverflowCheck(string operator)(Block a, Block b, BlockCell cell) const
+    long _checkedAdd(long a, long b)
     {
-        static assert(operator == "+" || operator == "-" || operator == "*");
+        return _checkedOp!(adds)(a, b);
+    }
 
-        immutable left = checked!Throw(a.get(cell));
-        immutable right = b.get(cell);
+    long _checkedSub(long a, long b)
+    {
+        return _checkedOp!(subs)(a, b);
+    }
 
-        try
-        {
-            // mixin construit l'instruction à la compilation.
-            immutable result = mixin("left" ~ operator ~ "right");
-            return result.get();
-        }
-        catch (Throw.CheckFailure)
+    long _checkedMul(long a, long b)
+    {
+        return _checkedOp!(muls)(a, b);
+    }
+
+    long _checkedOp(alias func)(long a, long b)
+    {
+        bool overflow;
+        immutable result = func(a, b, overflow);
+        if (overflow)
         {
             throw OverflowException.badComputation();
         }
+        return result;
     }
 }

@@ -41,10 +41,10 @@ class Matrix
             values[i] = row.dup;
         }
 
-        values[2 * position.row][2 * position.column] = block.get(BlockCell.topLeft);
-        values[2 * position.row][2 * position.column + 1] = block.get(BlockCell.topRight);
-        values[2 * position.row + 1][2 * position.column] = block.get(BlockCell.bottomLeft);
-        values[2 * position.row + 1][2 * position.column + 1] = block.get(BlockCell.bottomRight);
+        values[2 * position.row][2 * position.column] = block.topLeft;
+        values[2 * position.row][2 * position.column + 1] = block.topRight;
+        values[2 * position.row + 1][2 * position.column] = block.bottomLeft;
+        values[2 * position.row + 1][2 * position.column + 1] = block.bottomRight;
 
         return Matrix.of(values);
     }

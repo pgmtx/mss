@@ -4,12 +4,20 @@ import mss.core.matrix.block_cell;
 
 immutable struct Block
 {
+    // Ces attributs sont immuables, il n'y a donc pas de problème à ce qu'ils soient publics.
+    // Cela ne rend pas la méthode `get` redondante puisqu'elle est nécessaire pour des opérations
+    // comme `swap` et `withCell`.
+    long topLeft;
+    long topRight;
+    long bottomLeft;
+    long bottomRight;
+
     this(long topLeft, long topRight, long bottomLeft, long bottomRight) pure
     {
-        _topLeft = topLeft;
-        _topRight = topRight;
-        _bottomLeft = bottomLeft;
-        _bottomRight = bottomRight;
+        this.topLeft = topLeft;
+        this.topRight = topRight;
+        this.bottomLeft = bottomLeft;
+        this.bottomRight = bottomRight;
     }
 
     long get(BlockCell cell) const pure nothrow
@@ -17,13 +25,13 @@ immutable struct Block
         final switch (cell)
         {
         case BlockCell.topLeft:
-            return _topLeft;
+            return topLeft;
         case BlockCell.topRight:
-            return _topRight;
+            return topRight;
         case BlockCell.bottomLeft:
-            return _bottomLeft;
+            return bottomLeft;
         case BlockCell.bottomRight:
-            return _bottomRight;
+            return bottomRight;
         }
     }
 
@@ -33,13 +41,13 @@ immutable struct Block
         final switch (cell)
         {
         case BlockCell.topLeft:
-            return Block(value, _topRight, _bottomLeft, _bottomRight);
+            return Block(value, topRight, bottomLeft, bottomRight);
         case BlockCell.topRight:
-            return Block(_topLeft, value, _bottomLeft, _bottomRight);
+            return Block(topLeft, value, bottomLeft, bottomRight);
         case BlockCell.bottomLeft:
-            return Block(_topLeft, _topRight, value, _bottomRight);
+            return Block(topLeft, topRight, value, bottomRight);
         case BlockCell.bottomRight:
-            return Block(_topLeft, _topRight, _bottomLeft, value);
+            return Block(topLeft, topRight, bottomLeft, value);
         }
     }
 
@@ -47,12 +55,6 @@ immutable struct Block
     {
         import std.conv : to;
 
-        return to!string([_topLeft, _topRight, _bottomLeft, _bottomRight]);
+        return to!string([topLeft, topRight, bottomLeft, bottomRight]);
     }
-
-private:
-    long _topLeft;
-    long _topRight;
-    long _bottomLeft;
-    long _bottomRight;
 }
