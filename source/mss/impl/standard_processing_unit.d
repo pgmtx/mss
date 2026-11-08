@@ -1,22 +1,24 @@
 module mss.impl.standard_processing_unit;
 
 import mss.core.matrix : Block, BlockCell, BlockPair;
+import mss.core.error : OverflowException, ErrorCode;
+import std.checkedint : checked, Checked, Throw;
 
 class StandardProcessingUnit
 {
     Block add(Block a, Block b)
     {
-        return Block(0, 0, 0, 0);
+        return _operateOnBlocks!"+"(a, b);
     }
 
     Block substract(Block a, Block b)
     {
-        return Block(0, 0, 0, 0);
+        return _operateOnBlocks!"-"(a, b);
     }
 
     Block multiply(Block a, Block b)
     {
-        return Block(0, 0, 0, 0);
+        return _operateOnBlocks!"*"(a, b);
     }
 
     Block swap(Block block, BlockCell cell1, BlockCell cell2)
@@ -34,8 +36,12 @@ class StandardProcessingUnit
 
     BlockPair swap(Block block1, BlockCell cell1, Block block2, BlockCell cell2)
     {
-        return BlockPair(block1.withCell(cell1, block2.get(cell2)),
-                block2.withCell(cell2, block1.get(cell1)));
+        // dfmt off
+        return BlockPair(
+            block1.withCell(cell1, block2.get(cell2)),
+            block2.withCell(cell2, block1.get(cell1))
+        );
+        // dfmt on
     }
 
     unittest
@@ -55,9 +61,46 @@ class StandardProcessingUnit
 
     Block sum(Block block)
     {
-        immutable s = block.get(BlockCell.topLeft) + block.get(
-                BlockCell.topRight) + block.get(BlockCell.bottomLeft) + block.get(
-                BlockCell.bottomRight);
+        // dfmt off
+        immutable s = block.get(BlockCell.topLeft) + block.get(BlockCell.topRight)
+                    + block.get(BlockCell.bottomLeft) + block.get(BlockCell.bottomRight);
+        // dfmt on
         return Block(s, 0, 0, 0);
+    }
+
+private:
+    // `operator` est une valeur qui doit être connue à la compilation.
+    // C'est pour cela qu'on peut utiliser un static assert.
+    Block _operateOnBlocks(string operator)(Block a, Block b)
+    {
+        static assert(operator == "+" || operator == "-" || operator == "*");
+
+        // dfmt off
+        return Block(
+            _calculateWithOverflowCheck!(operator)(a, b, BlockCell.topLeft),
+            _calculateWithOverflowCheck!(operator)(a, b, BlockCell.topRight),
+            _calculateWithOverflowCheck!(operator)(a, b, BlockCell.bottomLeft),
+            _calculateWithOverflowCheck!(operator)(a, b, BlockCell.bottomRight)
+        );
+        // dfmt on
+    }
+
+    long _calculateWithOverflowCheck(string operator)(Block a, Block b, BlockCell cell)
+    {
+        static assert(operator == "+" || operator == "-" || operator == "*");
+
+        immutable left = checked!Throw(a.get(cell));
+        immutable right = b.get(cell);
+
+        try
+        {
+            // mixin construit l'instruction à la compilation.
+            immutable result = mixin("left" ~ operator ~ "right");
+            return result.get();
+        }
+        catch (Throw.CheckFailure)
+        {
+            throw new OverflowException(ErrorCode.Err11);
+        }
     }
 }
