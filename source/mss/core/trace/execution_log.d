@@ -1,14 +1,33 @@
 module mss.core.trace.execution_log;
 
+import mss.core.error : OverflowException;
 import mss.core.weight : Action, ComponentModel;
 import mss.core.trace.log_entry;
 import mss.core.trace.sub_total;
+import std.checkedint : checked, Throw;
 
 class ExecutionLog
 {
-    LogEntry record(Action action, ComponentModel model, const string context) nothrow
+    private static int _logId = 1;
+
+    LogEntry record(Action action, ComponentModel model, const string context)
     {
-        auto entry = LogEntry(1, action, model.name, model.getWeight(action), _total, context);
+        immutable weight = model.getWeight(action);
+        auto totalWeight = checked!Throw(weight);
+
+        try
+        {
+            totalWeight += weight;
+        }
+        catch (Throw.CheckFailure)
+        {
+            throw OverflowException.costCounterExceeded();
+        }
+
+        _total = totalWeight.get();
+
+        immutable entry = LogEntry(_logId, action, model.name, weight, _total, context);
+        ++_logId;
         _entries ~= entry;
         return entry;
     }
@@ -18,7 +37,7 @@ class ExecutionLog
         return _total;
     }
 
-    LogEntry[] getEntries() const pure nothrow
+    immutable(LogEntry[]) getEntries() const pure nothrow
     {
         return _entries;
     }
@@ -28,6 +47,8 @@ class ExecutionLog
         SubTotal[Action] result;
         foreach (entry; _entries)
         {
+            // On utilise require pour ajouter une entrée dans la map, car l'assignation
+            // `result[entry.action] = ...` ne fonctionne pas pour une structure immuable.
             result.require(entry.action, SubTotal(entry.action,
                     entry.component, entry.number, entry.weight, entry.total));
         }

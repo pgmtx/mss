@@ -1,8 +1,8 @@
 module mss.impl.standard_processing_unit;
 
 import mss.core.matrix : Block, BlockCell, BlockPair;
-import mss.core.error : OverflowException, ErrorCode;
-import std.checkedint : checked, Checked, Throw;
+import mss.core.error : OverflowException;
+import std.checkedint : checked, Throw;
 
 class StandardProcessingUnit
 {
@@ -71,7 +71,7 @@ class StandardProcessingUnit
 private:
     // `operator` est une valeur qui doit être connue à la compilation.
     // C'est pour cela qu'on peut utiliser un static assert.
-    Block _operateOnBlocks(string operator)(Block a, Block b)
+    Block _operateOnBlocks(string operator)(Block a, Block b) const
     {
         // dfmt off
         return Block(
@@ -83,7 +83,7 @@ private:
         // dfmt on
     }
 
-    long _calculateWithOverflowCheck(string operator)(Block a, Block b, BlockCell cell)
+    long _calculateWithOverflowCheck(string operator)(Block a, Block b, BlockCell cell) const
     {
         static assert(operator == "+" || operator == "-" || operator == "*");
 
