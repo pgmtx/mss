@@ -1,7 +1,8 @@
 module mss.impl.standard_processing_unit;
 
-import mss.core.matrix : Block, BlockCell, BlockPair;
+import mss.core.component : ProcessingUnit;
 import mss.core.error : OverflowException;
+import mss.core.matrix : Block, BlockCell, BlockPair;
 import core.checkedint : adds, subs, muls;
 
 version (unittest)
@@ -9,7 +10,7 @@ version (unittest)
     import std.exception : assertThrown;
 }
 
-class StandardProcessingUnit
+class StandardProcessingUnit : ProcessingUnit
 {
     Block add(Block a, Block b)
     {
