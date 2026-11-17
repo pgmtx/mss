@@ -3,8 +3,15 @@ module mss.core.weight.component_model;
 import mss.core.weight.weight_table;
 import mss.core.weight.action;
 
-immutable class ComponentModel
+const class ComponentModel
 {
+    this(const string name, const WeightTable weights, bool predefined)
+    {
+        this.name = name;
+        this.weights = weights;
+        this.predefined = predefined;
+    }
+
     int getWeight(Action action) pure nothrow
     {
         // placeholder

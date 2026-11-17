@@ -2,8 +2,19 @@ module mss.core.computer.computer_model;
 
 import mss.core.weight : ComponentModel, ComponentCategory;
 
-immutable class ComputerModel
+const class ComputerModel
 {
+    this(const string name, ComponentModel processingUnit, ComponentModel memory,
+            ComponentModel inputManager, ComponentModel outputController, bool predefined)
+    {
+        _name = name;
+        _processingUnit = processingUnit;
+        _memory = memory;
+        _inputManager = inputManager;
+        _outputController = outputController;
+        _predefined = predefined;
+    }
+
     string getName() pure nothrow
     {
         return _name;

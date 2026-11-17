@@ -8,7 +8,7 @@ class WeightTable
     enum minWeight = 1;
     enum maxWeight = 10;
 
-    this(ComponentCategory category, int[Action] weights)
+    this(ComponentCategory category, const int[Action] weights)
     {
         import mss.core.error : InvalidWeightException;
         import std.algorithm;
@@ -30,7 +30,7 @@ class WeightTable
 
 private:
     ComponentCategory _category;
-    int[Action] _weights;
+    const int[Action] _weights;
 
     Action[] _getActionsFromCategory(ComponentCategory category)
     {
