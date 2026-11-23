@@ -127,6 +127,11 @@ class Matrix
         return _values.length;
     }
 
+    MatrixSize getSize() const pure nothrow
+    {
+        return _size;
+    }
+
     size_t getColumnsCount() const pure nothrow
     {
         return _values[0].length;

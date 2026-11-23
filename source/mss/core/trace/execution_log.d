@@ -13,7 +13,7 @@ class ExecutionLog
     LogEntry record(Action action, ComponentModel model, const string context)
     {
         immutable weight = model.getWeight(action);
-        auto totalWeight = checked!Throw(weight);
+        auto totalWeight = checked!Throw(_total);
 
         try
         {

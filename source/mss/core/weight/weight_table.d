@@ -28,6 +28,16 @@ class WeightTable
         _weights = weights;
     }
 
+    int getWeight(Action action) const
+    {
+        import mss.core.error : InvalidWeightException;
+        import std.exception : enforce;
+
+        enforce!InvalidWeightException(action in _weights,
+                "action does not belong to this component category");
+        return _weights[action];
+    }
+
 private:
     ComponentCategory _category;
     const int[Action] _weights;

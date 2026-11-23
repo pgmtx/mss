@@ -12,10 +12,9 @@ const class ComponentModel
         this.predefined = predefined;
     }
 
-    int getWeight(Action action) pure nothrow
+    int getWeight(Action action) const
     {
-        // placeholder
-        return 0;
+        return weights.getWeight(action);
     }
 
     string name;

@@ -4,6 +4,7 @@ import mss.core.computer.computer_model;
 import mss.core.trace : ExecutionLog;
 import mss.core.matrix;
 import mss.core.component;
+import mss.core.weight : Action, ComponentCategory, acquisition, storeMatrix;
 
 class Computer
 {
@@ -15,11 +16,64 @@ class Computer
         _memory = factory.createMemory(mode);
         _inputManager = factory.createInputManager(mode);
         _outputController = factory.createOutputController(mode);
+        _log = new ExecutionLog();
     }
 
-    void acquire(InputMatrix[] inputs) pure nothrow
+    void acquire(InputMatrix[] inputs)
     {
-        // placeholder
+        auto matrices = new Matrix[inputs.length];
+        foreach (i, input; inputs)
+        {
+            matrices[i] = _inputManager.acquire(input);
+            _log.record(acquisition(input.getMode(), input.getSize()),
+                    _model.getModel(ComponentCategory.inputManager),
+                    "Acquérir " ~ input.getName());
+        }
+
+        foreach (i, input; inputs)
+        {
+            _memory.storeMatrix(input.getName(), matrices[i]);
+            _log.record(storeMatrix(input.getSize()),
+                    _model.getModel(ComponentCategory.memory),
+                    "Stocker " ~ input.getName());
+        }
+    }
+
+    unittest
+    {
+        import mss.core.matrix : BlockPosition;
+        import mss.impl : StandardComponentFactory;
+
+        auto model = new ComputerModel("TEST",
+                _testComponentModel(ComponentCategory.processingUnit),
+                _testComponentModel(ComponentCategory.memory),
+                _testComponentModel(ComponentCategory.inputManager),
+                _testComponentModel(ComponentCategory.outputController), true);
+        auto computer = new Computer(model, new StandardComponentFactory());
+        InputMatrix[] inputs = [
+            new InputMatrix("A", Matrix.of([[1, 2], [3, 4]]),
+                    AcquisitionMode.manual, "console"),
+            new InputMatrix("B", Matrix.of([
+                [1, 2, 3, 4], [5, 6, 7, 8],
+                [9, 10, 11, 12], [13, 14, 15, 16]
+            ]), AcquisitionMode.random, "seed=1")
+        ];
+
+        computer.acquire(inputs);
+
+        immutable entries = computer.getLog().getEntries();
+        assert(entries.length == 4);
+        assert(entries[0].action == Action.inManualCsv2);
+        assert(entries[1].action == Action.inRandom4);
+        assert(entries[2].action == Action.memStoreMatrix2);
+        assert(entries[3].action == Action.memStoreMatrix4);
+        assert(entries[0].total == 2);
+        assert(entries[1].total == 4);
+        assert(entries[2].total == 7);
+        assert(entries[3].total == 10);
+        assert(computer.readMatrix("A").getBlock(BlockPosition(0, 0))
+                == Block(1, 2, 3, 4));
+        assert(computer.readMatrix("B").getRowsCount() == 4);
     }
 
     // --- Mémoire ---
@@ -115,5 +169,60 @@ private:
     void _processingInstruction()
     {
         // placeholder
+    }
+}
+
+version (unittest)
+{
+    import mss.core.weight : ComponentModel, WeightTable;
+
+    private ComponentModel _testComponentModel(ComponentCategory category)
+    {
+        enum defaultWeight = 1;
+        enum memoryWeight = 3;
+        enum inputManagerWeight = 2;
+
+        Action[] actions;
+        int weight = defaultWeight;
+
+        final switch (category)
+        {
+        case ComponentCategory.processingUnit:
+            actions = [
+                Action.puAdd, Action.puSubstract, Action.puMultiply,
+                Action.puSwap, Action.puSum
+            ];
+            break;
+        case ComponentCategory.memory:
+            actions = [
+                Action.memLoadBlock, Action.memWriteBlock,
+                Action.memStoreMatrix2, Action.memStoreMatrix4,
+                Action.memStoreMatrix8, Action.memStoreMatrix16
+            ];
+            weight = memoryWeight;
+            break;
+        case ComponentCategory.inputManager:
+            actions = [
+                Action.inManualCsv2, Action.inManualCsv4, Action.inManualCsv8,
+                Action.inManualCsv16, Action.inRandom2, Action.inRandom4,
+                Action.inRandom8, Action.inRandom16
+            ];
+            weight = inputManagerWeight;
+            break;
+        case ComponentCategory.outputController:
+            actions = [
+                Action.outTraceStep, Action.outMatrix2, Action.outMatrix4,
+                Action.outMatrix8, Action.outMatrix16, Action.outScalar
+            ];
+            break;
+        }
+
+        int[Action] weights;
+        foreach (action; actions)
+        {
+            weights[action] = weight;
+        }
+        return new ComponentModel("TEST",
+                new WeightTable(category, weights), true);
     }
 }
