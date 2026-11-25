@@ -26,16 +26,14 @@ class Computer
         {
             matrices[i] = _inputManager.acquire(input);
             _log.record(acquisition(input.getMode(), input.getSize()),
-                    _model.getModel(ComponentCategory.inputManager),
-                    "Acquérir " ~ input.getName());
+                    _model.getModel(ComponentCategory.inputManager), "Acquérir " ~ input.getName());
         }
 
         foreach (i, input; inputs)
         {
             _memory.storeMatrix(input.getName(), matrices[i]);
             _log.record(storeMatrix(input.getSize()),
-                    _model.getModel(ComponentCategory.memory),
-                    "Stocker " ~ input.getName());
+                    _model.getModel(ComponentCategory.memory), "Stocker " ~ input.getName());
         }
     }
 
@@ -44,8 +42,7 @@ class Computer
         import mss.core.matrix : BlockPosition;
         import mss.impl : StandardComponentFactory;
 
-        auto model = new ComputerModel("TEST",
-                _testComponentModel(ComponentCategory.processingUnit),
+        auto model = new ComputerModel("TEST", _testComponentModel(ComponentCategory.processingUnit),
                 _testComponentModel(ComponentCategory.memory),
                 _testComponentModel(ComponentCategory.inputManager),
                 _testComponentModel(ComponentCategory.outputController), true);
@@ -54,8 +51,10 @@ class Computer
             new InputMatrix("A", Matrix.of([[1, 2], [3, 4]]),
                     AcquisitionMode.manual, "console"),
             new InputMatrix("B", Matrix.of([
-                [1, 2, 3, 4], [5, 6, 7, 8],
-                [9, 10, 11, 12], [13, 14, 15, 16]
+                    [1, 2, 3, 4],
+                    [5, 6, 7, 8],
+                    [9, 10, 11, 12],
+                    [13, 14, 15, 16]
             ]), AcquisitionMode.random, "seed=1")
         ];
 
@@ -71,8 +70,7 @@ class Computer
         assert(entries[1].total == 4);
         assert(entries[2].total == 7);
         assert(entries[3].total == 10);
-        assert(computer.readMatrix("A").getBlock(BlockPosition(0, 0))
-                == Block(1, 2, 3, 4));
+        assert(computer.readMatrix("A").getBlock(BlockPosition(0, 0)) == Block(1, 2, 3, 4));
         assert(computer.readMatrix("B").getRowsCount() == 4);
     }
 
@@ -189,15 +187,15 @@ version (unittest)
         {
         case ComponentCategory.processingUnit:
             actions = [
-                Action.puAdd, Action.puSubstract, Action.puMultiply,
-                Action.puSwap, Action.puSum
+                Action.puAdd, Action.puSubstract, Action.puMultiply, Action.puSwap,
+                Action.puSum
             ];
             break;
         case ComponentCategory.memory:
             actions = [
-                Action.memLoadBlock, Action.memWriteBlock,
-                Action.memStoreMatrix2, Action.memStoreMatrix4,
-                Action.memStoreMatrix8, Action.memStoreMatrix16
+                Action.memLoadBlock, Action.memWriteBlock, Action.memStoreMatrix2,
+                Action.memStoreMatrix4, Action.memStoreMatrix8,
+                Action.memStoreMatrix16
             ];
             weight = memoryWeight;
             break;
@@ -222,7 +220,6 @@ version (unittest)
         {
             weights[action] = weight;
         }
-        return new ComponentModel("TEST",
-                new WeightTable(category, weights), true);
+        return new ComponentModel("TEST", new WeightTable(category, weights), true);
     }
 }

@@ -8,8 +8,7 @@ import mss.core.matrix.block_position : BlockPosition;
 
 const class InputMatrix
 {
-    this(const string name, Matrix matrix, AcquisitionMode mode,
-            const string source)
+    this(const string name, Matrix matrix, AcquisitionMode mode, const string source)
     {
         _name = name;
         _matrix = matrix;
@@ -64,8 +63,6 @@ unittest
     assert(original.getMode() == AcquisitionMode.csv);
     assert(original.getSize() == MatrixSize.s2);
     assert(original.getSource() == "input.csv");
-    assert(original.getMatrix().getBlock(BlockPosition(0, 0))
-            == Block(1, 2, 3, 4));
-    assert(replacement.getMatrix().getBlock(BlockPosition(0, 0))
-            == Block(5, 6, 7, 8));
+    assert(original.getMatrix().getBlock(BlockPosition(0, 0)) == Block(1, 2, 3, 4));
+    assert(replacement.getMatrix().getBlock(BlockPosition(0, 0)) == Block(5, 6, 7, 8));
 }

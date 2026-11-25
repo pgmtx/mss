@@ -66,26 +66,31 @@ class Matrix
 
     unittest
     {
+        // dfmt off
         const m = Matrix.of([
-            [1, 2, 3, 4], [5, 6, 7, 8], [8, 7, 6, 5], [4, 3, 2, 1]
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [8, 7, 6, 5],
+            [4, 3, 2, 1]
         ]);
+        // dfmt on
 
         immutable position = BlockPosition(1, 1);
         immutable expectedBlock = Block(92, 58, 65, 39);
 
         const m2 = m.withBlock(position, expectedBlock);
-
         assert(m.getBlock(position) != expectedBlock);
         assert(m2.getBlock(position) == expectedBlock);
     }
 
-    BlockPosition[] blockPositions() const
+    BlockPosition[] getBlockPositions() const
     {
+        immutable blocksPerSide = getBlocksPerSide(_size);
         BlockPosition[] result;
 
-        for (size_t i = 0; i < _size; i += 2)
+        foreach (i; 0 .. blocksPerSide)
         {
-            for (size_t j = 0; j < _size; j += 2)
+            foreach (j; 0 .. blocksPerSide)
             {
                 result ~= BlockPosition(i, j);
             }
@@ -96,15 +101,20 @@ class Matrix
 
     unittest
     {
+        // dfmt off
         const m = Matrix.of([
-            [1, 2, 3, 4], [5, 6, 7, 8], [8, 7, 6, 5], [4, 3, 2, 1]
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+            [8, 7, 6, 5],
+            [4, 3, 2, 1]
         ]);
+        // dfmt on
 
         immutable expected = [
-            BlockPosition(0, 0), BlockPosition(0, 2), BlockPosition(2, 0),
-            BlockPosition(2, 2)
+            BlockPosition(0, 0), BlockPosition(0, 1), BlockPosition(1, 0),
+            BlockPosition(1, 1)
         ];
-        assert(m.blockPositions() == expected);
+        assert(m.getBlockPositions() == expected);
     }
 
     private this(const long[][] values)
@@ -135,6 +145,19 @@ class Matrix
     size_t getColumnsCount() const pure nothrow
     {
         return _values[0].length;
+    }
+
+    // Redéfinit l'opérateur `==`
+    bool opEquals(const Matrix other) const pure nothrow
+    {
+        return _size == other._size && _values == other._values;
+    }
+
+    override string toString() const pure
+    {
+        import std.conv : to;
+
+        return to!string(_values);
     }
 
 private:
