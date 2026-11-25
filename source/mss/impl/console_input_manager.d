@@ -44,11 +44,11 @@ class ConsoleInputManager : InputManager
             immutable content = readText(path);
             values = csvReader!long(content).map!(r => r.array).array;
         }
-        catch (FileException _)
+        catch (FileException)
         {
             throw new UnreadableFileException("could not read the file " ~ path);
         }
-        catch (CSVException _)
+        catch (CSVException)
         {
             throw new UnreadableFileException("could not parse the file " ~ path);
         }
@@ -68,7 +68,7 @@ class ConsoleInputManager : InputManager
                 value = readInt(prompt, MatrixRules.minValue, MatrixRules.maxValue);
             }
         }
-        return Matrix.of([[0, 0], [0, 0]]);
+        return Matrix.of(values);
     }
 
     Matrix generateRandom(MatrixSize size)
