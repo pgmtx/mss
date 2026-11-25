@@ -6,7 +6,7 @@ import std.stdio : readfln, write, writeln;
 
 class ConsoleInputManager : InputManager
 {
-    string readLine(string prompt)
+    string readLine(const string prompt)
     {
         write(prompt);
         string result;
@@ -14,7 +14,7 @@ class ConsoleInputManager : InputManager
         return result;
     }
 
-    int readInt(string prompt, int min, int max)
+    int readInt(const string prompt, int min, int max)
     {
         int result;
         while (true)
@@ -52,7 +52,10 @@ class ConsoleInputManager : InputManager
         {
             throw new UnreadableFileException("could not parse the file " ~ path);
         }
-        return Matrix.of(values);
+
+        auto result = Matrix.of(values);
+        MatrixRules.check(result);
+        return result;
     }
 
     Matrix enterMatrix(MatrixSize size)
