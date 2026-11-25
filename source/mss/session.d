@@ -122,7 +122,7 @@ shared static this()
         Action.outScalar: 1,
     ]);
 
-    sor3 = createComponentModel("SOR2", ComponentCategory.outputController, [
+    sor3 = createComponentModel("SOR3", ComponentCategory.outputController, [
         Action.outTraceStep: 3,
         Action.outMatrix2: 1,
         Action.outMatrix4: 2,
