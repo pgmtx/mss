@@ -6,6 +6,23 @@ import mss.core.matrix.block_position;
 import mss.core.matrix.matrix_size;
 import mss.core.matrix.matrix_rules;
 
+private long[][] deepCopyArray(const long[][] values)
+{
+    if (values.length == 0)
+    {
+        return [];
+    }
+
+    // On ne peut pas directement appeler values.dup, car cela
+    // copierait seulement le tableau général et non chaque ligne.
+    auto result = new long[][](values.length, values[0].length);
+    foreach (i, row; values)
+    {
+        result[i] = row.dup;
+    }
+    return result;
+}
+
 class Matrix
 {
     this(MatrixSize size)
@@ -24,6 +41,21 @@ class Matrix
         return new Matrix(_values);
     }
 
+    unittest
+    {
+        long[][] values = [
+            [-27, 64, 5, -81],
+            [38, -12, 93, 7],
+            [-54, 21, -3, 76],
+            [9, -68, 44, -19],
+        ];
+
+        auto matrix = Matrix.of(values);
+        assert(matrix.getBlock(BlockPosition(0, 0)).topLeft == -27);
+        values[0][0] = 1;
+        assert(matrix.getBlock(BlockPosition(0, 0)).topLeft == -27);
+    }
+
     Matrix withBlock(BlockPosition position, Block block) const
     in
     {
@@ -33,13 +65,7 @@ class Matrix
     }
     do
     {
-        // On ne peut pas directement appeler _values.dup, car cela
-        // copierait seulement le tableau général et non chaque ligne.
-        auto values = new long[][](_size, _size);
-        foreach (i, row; _values)
-        {
-            values[i] = row.dup;
-        }
+        auto values = deepCopyArray(_values);
 
         values[2 * position.row][2 * position.column] = block.topLeft;
         values[2 * position.row][2 * position.column + 1] = block.topRight;
@@ -129,7 +155,7 @@ class Matrix
     do
     {
         _size = fromSide(values.length);
-        _values = values;
+        _values = deepCopyArray(values);
     }
 
     size_t getRowsCount() const pure nothrow
