@@ -19,13 +19,13 @@ private:
         switch (code)
         {
         case ErrorCode.Err07:
-            return "incompatible dimensions";
+            return "dimensions incompatibles";
         case ErrorCode.Err08:
-            return "reference is unavailable";
+            return "référence indisponible";
         case ErrorCode.Err09:
-            return "invalid entry type or entries count";
+            return "type ou nombre d'entrées invalides";
         default:
-            return "plan is empty";
+            return "plan vide";
         }
     }
 }

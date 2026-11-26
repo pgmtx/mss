@@ -47,6 +47,8 @@ class Computer
                 _testComponentModel(ComponentCategory.inputManager),
                 _testComponentModel(ComponentCategory.outputController), true);
         auto computer = new Computer(model, new StandardComponentFactory());
+
+        // dfmt off
         InputMatrix[] inputs = [
             new InputMatrix("A", Matrix.of([[1, 2], [3, 4]]),
                     AcquisitionMode.manual, "console"),
@@ -57,6 +59,7 @@ class Computer
                     [13, 14, 15, 16]
             ]), AcquisitionMode.random, "seed=1")
         ];
+        // dfmt on
 
         computer.acquire(inputs);
 

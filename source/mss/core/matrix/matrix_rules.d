@@ -2,7 +2,6 @@ module mss.core.matrix.matrix_rules;
 
 import std.exception : enforce;
 import mss.core.error : InvalidMatrixException;
-import mss.core.matrix.matrix;
 import mss.core.matrix.matrix_size;
 
 class MatrixRules
@@ -14,23 +13,35 @@ static:
     enum minValue = -99;
     enum maxValue = 99;
 
-    void check(Matrix matrix)
+    void check(const long[][] values)
     {
         import std.algorithm : canFind;
 
         immutable validSizes = [
             MatrixSize.s2, MatrixSize.s4, MatrixSize.s8, MatrixSize.s16
         ];
-        enforce!InvalidMatrixException(validSizes.canFind(matrix.getRowsCount()),
-                "invalid number of rows");
-        enforce!InvalidMatrixException(validSizes.canFind(matrix.getColumnsCount()),
-                "invalid number of columns");
+
+        immutable rows = values.length;
+        immutable columns = values.length > 0 ? values[0].length : 0;
+        immutable isArrayValid = rows == columns && validSizes.canFind(rows);
+        enforce(isArrayValid, new InvalidMatrixException(rows, columns));
+    }
+
+    unittest
+    {
+        import std.exception : assertThrown;
+
+        long[][] matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9],];
+        assertThrown!InvalidMatrixException(check(matrix));
+
+        matrix = [[1, 2, 3], [4, 5],];
+        assertThrown!InvalidMatrixException(check(matrix));
     }
 
     void checkValue(long value)
     {
-        enforce!InvalidMatrixException(minValue <= value && value <= maxValue,
-                "invalid input value");
+        enforce(minValue <= value && value <= maxValue,
+                new InvalidMatrixException(value, minValue, maxValue));
     }
 
     void normalizeName(ref string name)

@@ -7,7 +7,7 @@ immutable struct BlockPosition
 
     string label(const string name) const pure
     {
-        import std.string : format;
+        import std.format : format;
 
         return format("%s%d%d", name, row + 1, column + 1);
     }

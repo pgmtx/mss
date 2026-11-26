@@ -7,6 +7,6 @@ class DuplicateNameException : MssException
 {
     this(const string matrixName, const string file = __FILE__, size_t line = __LINE__)
     {
-        super("duplicate name found: " ~ matrixName, ErrorCode.Err04, file, line);
+        super("le nom " ~ matrixName ~ " existe déjà", ErrorCode.Err04, file, line);
     }
 }

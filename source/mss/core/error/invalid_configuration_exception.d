@@ -7,6 +7,6 @@ class InvalidConfigurationException : MssException
 {
     this(const string file = __FILE__, size_t line = __LINE__)
     {
-        super("incomplete configuration", ErrorCode.Err06, file, line);
+        super("configuration incomplète", ErrorCode.Err06, file, line);
     }
 }

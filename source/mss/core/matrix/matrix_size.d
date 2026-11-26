@@ -8,17 +8,17 @@ enum MatrixSize
     s16 = 16
 }
 
-size_t getSide(MatrixSize size) pure
+size_t getSide(MatrixSize size) pure nothrow
 {
     return size;
 }
 
-size_t getBlocksPerSide(MatrixSize size) pure
+size_t getBlocksPerSide(MatrixSize size) pure nothrow
 {
     return size / 2;
 }
 
-size_t getBlockCount(MatrixSize size) pure
+size_t getBlockCount(MatrixSize size) pure nothrow
 {
     return size * size / 4;
 }
@@ -26,14 +26,16 @@ size_t getBlockCount(MatrixSize size) pure
 MatrixSize fromSide(size_t n)
 {
     import std.conv : to, ConvException;
-    import mss.core.error.invalid_matrix_exception;
+    import std.format : format;
+    import mss.core.error : InvalidMatrixException, ErrorCode;
 
     try
     {
         return to!MatrixSize(n);
     }
-    catch (ConvException e)
+    catch (ConvException)
     {
-        throw new InvalidMatrixException("invalid size : " ~ to!string(n));
+        immutable message = format("impossible de convertir la valeur %d en MatrixSize", n);
+        throw new InvalidMatrixException(message, ErrorCode.Err03);
     }
 }

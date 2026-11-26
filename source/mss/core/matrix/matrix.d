@@ -44,9 +44,7 @@ class Matrix
     unittest
     {
         long[][] values = [
-            [-27, 64, 5, -81],
-            [38, -12, 93, 7],
-            [-54, 21, -3, 76],
+            [-27, 64, 5, -81], [38, -12, 93, 7], [-54, 21, -3, 76],
             [9, -68, 44, -19],
         ];
 
@@ -144,16 +142,8 @@ class Matrix
     }
 
     private this(const long[][] values)
-    in
     {
-        import std.exception : assertNotThrown;
-
-        assert(values.length == values[0].length);
-        assertNotThrown(fromSide(values.length));
-        assertNotThrown(fromSide(values[0].length));
-    }
-    do
-    {
+        MatrixRules.check(values);
         _size = fromSide(values.length);
         _values = deepCopyArray(values);
     }

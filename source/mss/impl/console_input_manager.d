@@ -16,16 +16,27 @@ class ConsoleInputManager : InputManager
 
     int readInt(const string prompt, int min, int max)
     {
+        import std.conv : ConvException;
+
         int result;
         while (true)
         {
             write(prompt);
-            readfln("%d", result);
+            try
+            {
+                readfln("%d", &result);
+            }
+            // si l'entrée n'est pas un nombre
+            catch (ConvException)
+            {
+                result = max + 1;
+            }
+
             if (min <= result && result <= max)
             {
                 break;
             }
-            writeln("Please enter a value between ", min, " and ", max);
+            writeln("Veuillez entrer une valeur entre ", min, " et ", max);
         }
         return result;
     }
@@ -43,18 +54,24 @@ class ConsoleInputManager : InputManager
         {
             immutable content = readText(path);
             values = csvReader!long(content).map!(r => r.array).array;
+            foreach (row; values)
+            {
+                foreach (value; row)
+                {
+                    MatrixRules.checkValue(value);
+                }
+            }
         }
         catch (FileException)
         {
-            throw new UnreadableFileException("could not read the file " ~ path);
+            throw new UnreadableFileException("impossible de lire le fichier " ~ path);
         }
         catch (CSVException)
         {
-            throw new UnreadableFileException("could not parse the file " ~ path);
+            throw new UnreadableFileException("impossible d'analyser le fichier " ~ path);
         }
 
         auto result = Matrix.of(values);
-        MatrixRules.check(result);
         return result;
     }
 
