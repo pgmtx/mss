@@ -12,10 +12,12 @@ class Computer
     this(ComputerModel model, ComponentFactory factory)
     {
         _model = model;
-        _processingUnit = factory.createProcessingUnit(model.getModel(ComponentCategory.processingUnit));
+        _processingUnit = factory.createProcessingUnit(
+                model.getModel(ComponentCategory.processingUnit));
         _memory = factory.createMemory(model.getModel(ComponentCategory.memory));
         _inputManager = factory.createInputManager(model.getModel(ComponentCategory.inputManager));
-        _outputController = factory.createOutputController(model.getModel(ComponentCategory.outputController));
+        _outputController = factory.createOutputController(
+                model.getModel(ComponentCategory.outputController));
         _log = new ExecutionLog();
     }
 
@@ -91,13 +93,15 @@ class Computer
 
     Block loadBlock(const string name, BlockPosition position)
     {
-        _log.record(Action.memLoadBlock, _model.getModel(ComponentCategory.memory), format("Chargement du bloc %s%d%d", name, position.row, position.column));
+        _log.record(Action.memLoadBlock, _model.getModel(ComponentCategory.memory),
+                format("Chargement du bloc %s%d%d", name, position.row, position.column));
         return _memory.loadBlock(name, position);
     }
 
     void writeBlock(const string name, BlockPosition position, Block block)
     {
-        _log.record(Action.memWriteBlock, _model.getModel(ComponentCategory.memory), format("Ecriture du bloc %s%d%d", name, position.row, position.column));
+        _log.record(Action.memWriteBlock, _model.getModel(ComponentCategory.memory),
+                format("Ecriture du bloc %s%d%d", name, position.row, position.column));
         _memory.writeBlock(name, position, block);
     }
 
