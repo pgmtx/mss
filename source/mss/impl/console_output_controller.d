@@ -4,21 +4,27 @@ import mss.core.component : OutputController;
 import mss.core.error : MssException;
 import mss.core.matrix : Matrix;
 import mss.core.trace : TraceStep;
+import mss.core.weight : ComponentModel;
 import std.stdio : write, writeln, writefln;
 
 class ConsoleOutputController : OutputController
 {
-    void showMessage(const string text)
+    this(ComponentModel model)
+    {
+        _model = model;
+    }
+
+    override void showMessage(const string text)
     {
         write(text);
     }
 
-    void showError(const MssException exception)
+    override void showError(const MssException exception)
     {
         write(exception.msg);
     }
 
-    void showTraceStep(const TraceStep step)
+    override void showTraceStep(const TraceStep step)
     {
         writefln("%s | %s | %s", step.computer, step.label, step.computation.context);
         foreach (i, result; step.results)
@@ -31,13 +37,20 @@ class ConsoleOutputController : OutputController
                 step.display.number, step.display.weight, step.display.total);
     }
 
-    void showMatrix(const string name, Matrix matrix)
+    override void showMatrix(const string name, Matrix matrix)
     {
-
+        // placeholder
     }
 
-    void showScalar(const string name, long value)
+    override void showScalar(const string name, long value)
     {
-
+        // placeholder
     }
+
+    override ComponentModel getModel() const
+    {
+        return _model;
+    }
+
+    private ComponentModel _model;
 }

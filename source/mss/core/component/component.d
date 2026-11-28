@@ -4,5 +4,5 @@ import mss.core.weight.component_model;
 
 interface Component
 {
-    ComponentModel getModel();
+    ComponentModel getModel() const;
 }

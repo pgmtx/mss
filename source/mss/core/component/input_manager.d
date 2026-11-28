@@ -1,15 +1,14 @@
 module mss.core.component.input_manager;
 
-import mss.core.matrix.matrix;
-import mss.core.matrix.matrix_size;
-import mss.core.matrix.input_matrix;
+import mss.core.component.component;
+import mss.core.matrix : InputMatrix, Matrix, MatrixSize;
 
-interface InputManager
+interface InputManager : Component
 {
-    string readLine(string prompt);
-    int readInt(string prompt, int min, int max);
-    Matrix readCsv(string path);
+    string readLine(const string prompt);
+    int readInt(const string prompt, int min, int max);
+    Matrix readCsv(const string path);
     Matrix enterMatrix(MatrixSize size);
     Matrix generateRandom(MatrixSize size);
-    Matrix acquire(const InputMatrix input);
+    Matrix acquire(InputMatrix input);
 }

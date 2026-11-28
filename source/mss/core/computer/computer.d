@@ -1,25 +1,24 @@
 module mss.core.computer.computer;
 
-import mss.core.computer.computer_model;
-import mss.core.trace : ExecutionLog;
-import mss.core.matrix;
 import mss.core.component;
+import mss.core.computer.computer_model;
+import mss.core.matrix;
+import mss.core.trace : ExecutionLog;
 import mss.core.weight : Action, ComponentCategory, acquisition, storeMatrix;
 
 class Computer
 {
     this(ComputerModel model, ComponentFactory factory)
     {
-        immutable mode = AcquisitionMode.manual;
         _model = model;
-        _processingUnit = factory.createProcessingUnit(mode);
-        _memory = factory.createMemory(mode);
-        _inputManager = factory.createInputManager(mode);
-        _outputController = factory.createOutputController(mode);
+        _processingUnit = factory.createProcessingUnit(model.getModel(ComponentCategory.processingUnit));
+        _memory = factory.createMemory(model.getModel(ComponentCategory.memory));
+        _inputManager = factory.createInputManager(model.getModel(ComponentCategory.inputManager));
+        _outputController = factory.createOutputController(model.getModel(ComponentCategory.outputController));
         _log = new ExecutionLog();
     }
 
-    void acquire(InputMatrix[] inputs)
+    void acquire(const InputMatrix[] inputs)
     {
         auto matrices = new Matrix[inputs.length];
         foreach (i, input; inputs)
@@ -100,7 +99,7 @@ class Computer
         _memory.writeBlock(name, position, block);
     }
 
-    Matrix readMatrix(const string name)
+    const(Matrix) readMatrix(const string name)
     {
         return _memory.read(name);
     }

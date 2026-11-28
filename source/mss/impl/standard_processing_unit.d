@@ -3,6 +3,7 @@ module mss.impl.standard_processing_unit;
 import mss.core.component : ProcessingUnit;
 import mss.core.error : OverflowException;
 import mss.core.matrix : Block, BlockCell, BlockPair;
+import mss.core.weight : ComponentModel;
 import core.checkedint : adds, subs, muls;
 
 version (unittest)
@@ -12,7 +13,12 @@ version (unittest)
 
 class StandardProcessingUnit : ProcessingUnit
 {
-    Block add(Block a, Block b)
+    this(ComponentModel model)
+    {
+        _model = model;
+    }
+
+    override Block add(Block a, Block b) const
     {
         // dfmt off
         return Block(
@@ -34,7 +40,7 @@ class StandardProcessingUnit : ProcessingUnit
         assertThrown!OverflowException(pu.add(Block(long.max, 2, 3, 7), Block(1, 2, 3, 4)));
     }
 
-    Block substract(Block a, Block b)
+    override Block substract(Block a, Block b) const
     {
         // dfmt off
         return Block(
@@ -56,7 +62,7 @@ class StandardProcessingUnit : ProcessingUnit
         assertThrown!OverflowException(pu.substract(Block(long.min, 2, 3, 7), Block(1, 2, 3, 4)));
     }
 
-    Block multiply(Block a, Block b)
+    override Block multiply(Block a, Block b) const
     {
         // dfmt off
         return Block(
@@ -78,7 +84,7 @@ class StandardProcessingUnit : ProcessingUnit
         assertThrown!OverflowException(pu.multiply(Block(long.max, 2, 3, 7), Block(2, 2, 3, 4)));
     }
 
-    Block swap(Block block, BlockCell cell1, BlockCell cell2)
+    override Block swap(Block block, BlockCell cell1, BlockCell cell2) const
     {
         // dfmt off
         return block.withCell(cell1, block.get(cell2))
@@ -94,7 +100,7 @@ class StandardProcessingUnit : ProcessingUnit
         assert(pu.swap(base, BlockCell.topRight, BlockCell.bottomLeft) == Block(38, 68, 74, 9));
     }
 
-    BlockPair swap(Block block1, BlockCell cell1, Block block2, BlockCell cell2)
+    override BlockPair swap(Block block1, BlockCell cell1, Block block2, BlockCell cell2) const
     {
         // dfmt off
         return BlockPair(
@@ -119,7 +125,7 @@ class StandardProcessingUnit : ProcessingUnit
         assert(swapResult2.second == Block(93, 82, 3, 86));
     }
 
-    Block sum(Block block)
+    override Block sum(Block block) const
     {
         import std.traits : EnumMembers;
 
@@ -140,28 +146,35 @@ class StandardProcessingUnit : ProcessingUnit
         assertThrown!OverflowException(pu.sum(block2));
     }
 
+    override ComponentModel getModel() const
+    {
+        return _model;
+    }
+
 private:
-    long _checkedMulAdd(long a, long b, long c, long d)
+    ComponentModel _model;
+
+    long _checkedMulAdd(long a, long b, long c, long d) const
     {
         return _checkedAdd(_checkedMul(a, b), _checkedMul(c, d));
     }
 
-    long _checkedAdd(long a, long b)
+    long _checkedAdd(long a, long b) const
     {
         return _checkedOp!(adds)(a, b);
     }
 
-    long _checkedSub(long a, long b)
+    long _checkedSub(long a, long b) const
     {
         return _checkedOp!(subs)(a, b);
     }
 
-    long _checkedMul(long a, long b)
+    long _checkedMul(long a, long b) const
     {
         return _checkedOp!(muls)(a, b);
     }
 
-    long _checkedOp(alias func)(long a, long b)
+    long _checkedOp(alias func)(long a, long b) const
     {
         bool overflow;
         immutable result = func(a, b, overflow);

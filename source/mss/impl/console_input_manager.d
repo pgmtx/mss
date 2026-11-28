@@ -2,11 +2,17 @@ module mss.impl.console_input_manager;
 
 import mss.core.component : InputManager;
 import mss.core.matrix;
+import mss.core.weight : ComponentModel;
 import std.stdio : readfln, write, writeln;
 
 class ConsoleInputManager : InputManager
 {
-    string readLine(const string prompt)
+    this(ComponentModel model)
+    {
+        _model = model;
+    }
+
+    override string readLine(const string prompt)
     {
         write(prompt);
         string result;
@@ -14,7 +20,7 @@ class ConsoleInputManager : InputManager
         return result;
     }
 
-    int readInt(const string prompt, int min, int max)
+    override int readInt(const string prompt, int min, int max)
     {
         import std.conv : ConvException;
 
@@ -41,7 +47,7 @@ class ConsoleInputManager : InputManager
         return result;
     }
 
-    Matrix readCsv(const string path)
+    override Matrix readCsv(const string path)
     {
         import mss.core.error : UnreadableFileException;
         import std.algorithm : map;
@@ -75,7 +81,7 @@ class ConsoleInputManager : InputManager
         return result;
     }
 
-    Matrix enterMatrix(MatrixSize size)
+    override Matrix enterMatrix(MatrixSize size)
     {
         import std.format : format;
 
@@ -91,7 +97,7 @@ class ConsoleInputManager : InputManager
         return Matrix.of(values);
     }
 
-    Matrix generateRandom(MatrixSize size)
+    override Matrix generateRandom(MatrixSize size)
     {
         import std.random : uniform;
 
@@ -106,8 +112,15 @@ class ConsoleInputManager : InputManager
         return Matrix.of(values);
     }
 
-    Matrix acquire(const InputMatrix input)
+    override Matrix acquire(InputMatrix input)
     {
         return input.getMatrix();
     }
+
+    override ComponentModel getModel() const
+    {
+        return _model;
+    }
+
+    private ComponentModel _model;
 }

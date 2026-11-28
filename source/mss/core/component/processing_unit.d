@@ -1,15 +1,14 @@
 module mss.core.component.processing_unit;
 
-import mss.core.matrix.block;
-import mss.core.matrix.block_cell;
-import mss.core.matrix.block_pair;
+import mss.core.component.component;
+import mss.core.matrix : Block, BlockCell, BlockPair;
 
-interface ProcessingUnit
+interface ProcessingUnit : Component
 {
-    Block add(Block a, Block b);
-    Block substract(Block a, Block b);
-    Block multiply(Block a, Block b);
-    Block swap(Block block, BlockCell cell1, BlockCell cell2);
-    BlockPair swap(Block block1, BlockCell cell1, Block block2, BlockCell cell2);
-    Block sum(Block block);
+    Block add(Block a, Block b) const;
+    Block substract(Block a, Block b) const;
+    Block multiply(Block a, Block b) const;
+    Block swap(Block block, BlockCell cell1, BlockCell cell2) const;
+    BlockPair swap(Block block1, BlockCell cell1, Block block2, BlockCell cell2) const;
+    Block sum(Block block) const;
 }
