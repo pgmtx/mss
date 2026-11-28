@@ -4,7 +4,7 @@ import mss.core.component;
 import mss.core.computer.computer_model;
 import mss.core.matrix;
 import mss.core.trace : ExecutionLog;
-import mss.core.weight : Action, ComponentCategory, acquisition, storeMatrix;
+import mss.core.weight : Action, ComponentCategory, acquisition, storeMatrix, showMatrix;
 import std.format : format;
 
 class Computer
@@ -26,16 +26,13 @@ class Computer
         auto matrices = new Matrix[inputs.length];
         foreach (i, input; inputs)
         {
+            immutable size = input.getSize();
+            immutable name = input.getName();
             matrices[i] = _inputManager.acquire(input);
-            _log.record(acquisition(input.getMode(), input.getSize()),
-                    _model.getModel(ComponentCategory.inputManager), "Acquérir " ~ input.getName());
-        }
+            _logRecord(acquisition(input.getMode(), size), "Acquisition de " ~ name);
 
-        foreach (i, input; inputs)
-        {
-            _memory.storeMatrix(input.getName(), matrices[i]);
-            _log.record(storeMatrix(input.getSize()),
-                    _model.getModel(ComponentCategory.memory), "Stocker " ~ input.getName());
+            _memory.storeMatrix(name, matrices[i]);
+            _logRecord(storeMatrix(size), "Stockage de " ~ name);
         }
     }
 
@@ -43,6 +40,7 @@ class Computer
     {
         import mss.core.matrix : BlockPosition;
         import mss.impl : StandardComponentFactory;
+        import std.algorithm : map, equal;
 
         auto model = new ComputerModel("TEST", _testComponentModel(ComponentCategory.processingUnit),
                 _testComponentModel(ComponentCategory.memory),
@@ -66,15 +64,11 @@ class Computer
         computer.acquire(inputs);
 
         immutable entries = computer.getLog().getEntries();
-        assert(entries.length == 4);
-        assert(entries[0].action == Action.inManualCsv2);
-        assert(entries[1].action == Action.inRandom4);
-        assert(entries[2].action == Action.memStoreMatrix2);
-        assert(entries[3].action == Action.memStoreMatrix4);
-        assert(entries[0].total == 2);
-        assert(entries[1].total == 4);
-        assert(entries[2].total == 7);
-        assert(entries[3].total == 10);
+        assert(entries.map!(x => x.action).equal([
+            Action.inManualCsv2, Action.memStoreMatrix2, Action.inRandom4,
+            Action.memStoreMatrix4
+        ]));
+        assert(entries.map!(x => x.total).equal([2, 5, 7, 10]));
         assert(computer.readMatrix("A").getBlock(BlockPosition(0, 0)) == Block(1, 2, 3, 4));
         assert(computer.readMatrix("B").getRowsCount() == 4);
     }
@@ -93,15 +87,15 @@ class Computer
 
     Block loadBlock(const string name, BlockPosition position)
     {
-        _log.record(Action.memLoadBlock, _model.getModel(ComponentCategory.memory),
-                format("Chargement du bloc %s%d%d", name, position.row, position.column));
+        _logRecord(Action.memLoadBlock, format("Chargement du bloc %s%d%d",
+                name, position.row, position.column));
         return _memory.loadBlock(name, position);
     }
 
     void writeBlock(const string name, BlockPosition position, Block block)
     {
-        _log.record(Action.memWriteBlock, _model.getModel(ComponentCategory.memory),
-                format("Ecriture du bloc %s%d%d", name, position.row, position.column));
+        _logRecord(Action.memWriteBlock, format("Ecriture du bloc %s%d%d",
+                name, position.row, position.column));
         _memory.writeBlock(name, position, block);
     }
 
@@ -110,14 +104,20 @@ class Computer
         return _memory.read(name);
     }
 
-    void showMatrix(const string name) pure nothrow
+    void showMatrix(const string name)
     {
-        // placeholder
+        const matrix = readMatrix(name);
+
+        // La syntaxe .showMatrix permet de distinguer entre la méthode courante
+        // et la fonction définie pour une Action.
+        _logRecord(.showMatrix(matrix.getSize()), "Affichage de " ~ name);
+        _outputController.showMatrix(name, matrix);
     }
 
-    void showScalar(const string name, long value) pure nothrow
+    void showScalar(const string name, long value)
     {
-        // placeholder
+        _logRecord(Action.outScalar, "Affichage du scalaire " ~ name);
+        _outputController.showScalar(name, value);
     }
 
     // --- Instructions de l'UT ---
@@ -154,7 +154,7 @@ class Computer
 
     // --- Consultation ---
 
-    ComputerModel getModel() const pure nothrow
+    ComputerModel getModel() pure nothrow
     {
         return _model;
     }
@@ -171,6 +171,47 @@ private:
     Memory _memory;
     InputManager _inputManager;
     OutputController _outputController;
+
+    void _logRecord(Action action, const string context)
+    {
+        _log.record(action, _model.getModel(_getCategoryFromAction(action)), context);
+    }
+
+    ComponentCategory _getCategoryFromAction(Action action) const pure nothrow
+    {
+        final switch (action)
+        {
+        case Action.puAdd:
+        case Action.puSubstract:
+        case Action.puMultiply:
+        case Action.puSwap:
+        case Action.puSum:
+            return ComponentCategory.processingUnit;
+        case Action.memLoadBlock:
+        case Action.memWriteBlock:
+        case Action.memStoreMatrix2:
+        case Action.memStoreMatrix4:
+        case Action.memStoreMatrix8:
+        case Action.memStoreMatrix16:
+            return ComponentCategory.memory;
+        case Action.inManualCsv2:
+        case Action.inManualCsv4:
+        case Action.inManualCsv8:
+        case Action.inManualCsv16:
+        case Action.inRandom2:
+        case Action.inRandom4:
+        case Action.inRandom8:
+        case Action.inRandom16:
+            return ComponentCategory.inputManager;
+        case Action.outTraceStep:
+        case Action.outMatrix2:
+        case Action.outMatrix4:
+        case Action.outMatrix8:
+        case Action.outMatrix16:
+        case Action.outScalar:
+            return ComponentCategory.outputController;
+        }
+    }
 
     void _processingInstruction()
     {

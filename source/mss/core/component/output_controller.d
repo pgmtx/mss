@@ -10,6 +10,6 @@ interface OutputController : Component
     void showMessage(const string text);
     void showError(const MssException exception);
     void showTraceStep(TraceStep step);
-    void showMatrix(const string name, Matrix matrix);
+    void showMatrix(const string name, const Matrix matrix);
     void showScalar(const string name, long value);
 }

@@ -37,7 +37,7 @@ class ConsoleOutputController : OutputController
                 step.display.number, step.display.weight, step.display.total);
     }
 
-    override void showMatrix(const string name, Matrix matrix)
+    override void showMatrix(const string name, const Matrix matrix)
     {
         // placeholder
     }
