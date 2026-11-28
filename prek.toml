@@ -1,0 +1,30 @@
+[[repos]]
+repo = "local"
+hooks = [
+    {
+        id = "dfmt",
+        name = "dfmt",
+        language = "system",
+        entry = "dub run dfmt -- source",
+        pass_filenames = false,
+        types = ["file"],
+        files = "\\.d$",
+    },
+    {
+        id = "dub-test",
+        name = "dub-build",
+        language = "system",
+        entry = "dub build",
+        pass_filenames = false,
+        types = ["file"],
+        files = "\\.d$",
+    },
+    {
+        id = "dub-test",
+        name = "dub-test",
+        language = "system",
+        entry = "dub test",
+        pass_filenames = false,
+        always_run = true,
+    },
+]
