@@ -5,6 +5,7 @@ import mss.core.computer.computer_model;
 import mss.core.matrix;
 import mss.core.trace : ExecutionLog;
 import mss.core.weight : Action, ComponentCategory, acquisition, storeMatrix;
+import std.format : format;
 
 class Computer
 {
@@ -90,12 +91,13 @@ class Computer
 
     Block loadBlock(const string name, BlockPosition position)
     {
+        _log.record(Action.memLoadBlock, _model.getModel(ComponentCategory.memory), format("Chargement du bloc %s%d%d", name, position.row, position.column));
         return _memory.loadBlock(name, position);
     }
 
     void writeBlock(const string name, BlockPosition position, Block block)
     {
-
+        _log.record(Action.memWriteBlock, _model.getModel(ComponentCategory.memory), format("Ecriture du bloc %s%d%d", name, position.row, position.column));
         _memory.writeBlock(name, position, block);
     }
 

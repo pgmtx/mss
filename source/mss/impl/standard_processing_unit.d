@@ -6,9 +6,11 @@ import mss.core.matrix : Block, BlockCell, BlockPair;
 import mss.core.weight : ComponentModel;
 import core.checkedint : adds, subs, muls;
 
+// Ces instructions ne s'exécuteront que durant les tests
 version (unittest)
 {
     import std.exception : assertThrown;
+    import mss.session;
 }
 
 class StandardProcessingUnit : ProcessingUnit
@@ -32,7 +34,7 @@ class StandardProcessingUnit : ProcessingUnit
 
     unittest
     {
-        auto pu = new StandardProcessingUnit;
+        auto pu = new StandardProcessingUnit(ut1);
         immutable a = Block(-19, 80, -45, 23);
         immutable b = Block(20, 41, 66, -14);
         immutable c = Block(1, 121, 21, 9);
@@ -54,7 +56,7 @@ class StandardProcessingUnit : ProcessingUnit
 
     unittest
     {
-        auto pu = new StandardProcessingUnit;
+        auto pu = new StandardProcessingUnit(ut1);
         immutable a = Block(48, 98, -39, 70);
         immutable b = Block(74, 79, 25, -62);
         immutable c = Block(-26, 19, -64, 132);
@@ -76,7 +78,7 @@ class StandardProcessingUnit : ProcessingUnit
 
     unittest
     {
-        auto pu = new StandardProcessingUnit;
+        auto pu = new StandardProcessingUnit(ut1);
         immutable a = Block(25, -68, -38, -4);
         immutable b = Block(-9, 22, 18, -16);
         immutable c = Block(-1449, 1638, 270, -772);
@@ -94,7 +96,7 @@ class StandardProcessingUnit : ProcessingUnit
 
     unittest
     {
-        auto pu = new StandardProcessingUnit;
+        auto pu = new StandardProcessingUnit(ut1);
         auto base = Block(38, 74, 68, 9);
         assert(pu.swap(base, BlockCell.topLeft, BlockCell.topRight) == Block(74, 38, 68, 9));
         assert(pu.swap(base, BlockCell.topRight, BlockCell.bottomLeft) == Block(38, 68, 74, 9));
@@ -112,7 +114,7 @@ class StandardProcessingUnit : ProcessingUnit
 
     unittest
     {
-        auto pu = new StandardProcessingUnit;
+        auto pu = new StandardProcessingUnit(ut1);
         auto block1 = Block(35, 44, 82, 27);
         auto block2 = Block(93, 37, 3, 86);
 
@@ -139,7 +141,7 @@ class StandardProcessingUnit : ProcessingUnit
 
     unittest
     {
-        auto pu = new StandardProcessingUnit;
+        auto pu = new StandardProcessingUnit(ut1);
         immutable block = Block(-82, -56, 57, -15);
         assert(pu.sum(block) == Block(-96, 0, 0, 0));
         immutable block2 = Block(long.max / 2, long.max / 2, 1, 2);
@@ -174,6 +176,8 @@ private:
         return _checkedOp!(muls)(a, b);
     }
 
+    // Les symboles adds, subs et muls n'étant pas réellement des fonctions, il
+    // faut passer par un paramètre alias pour pouvoir les référencer.
     long _checkedOp(alias func)(long a, long b) const
     {
         bool overflow;
