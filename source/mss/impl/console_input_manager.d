@@ -58,7 +58,11 @@ class ConsoleInputManager : InputManager
         long[][] values;
         try
         {
+            import std.stdio;
+
+            writeln("avant readtext");
             immutable content = readText(path);
+            writeln("apres readtext");
             values = csvReader!long(content).map!(r => r.array).array;
             foreach (row; values)
             {

@@ -2,7 +2,7 @@ module mss.core.computer.computer_model;
 
 import mss.core.weight : ComponentModel, ComponentCategory;
 
-const class ComputerModel
+class ComputerModel
 {
     this(const string name, ComponentModel processingUnit, ComponentModel memory,
             ComponentModel inputManager, ComponentModel outputController, bool predefined)
@@ -15,12 +15,12 @@ const class ComputerModel
         _predefined = predefined;
     }
 
-    string getName() pure nothrow
+    string getName() const pure nothrow
     {
         return _name;
     }
 
-    ComponentModel getModel(ComponentCategory category) pure nothrow
+    ComponentModel getModel(ComponentCategory category) const pure nothrow
     {
         final switch (category)
         {

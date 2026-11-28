@@ -21,7 +21,7 @@ class ConsoleOutputController : OutputController
 
     override void showError(const MssException exception)
     {
-        write(exception.msg);
+        write(exception.msg ~ '\n');
     }
 
     override void showTraceStep(const TraceStep step)

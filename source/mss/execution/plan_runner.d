@@ -17,7 +17,7 @@ class PlanRunner
 {
     @disable this();
 
-    static RunResult run(TestPlan plan, ComputerModel model, ComponentFactory factory)
+    static RunResult run(TestPlan plan, const ComputerModel model, ComponentFactory factory)
     {
         PlanValidator.validate(plan);
 

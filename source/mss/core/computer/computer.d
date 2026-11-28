@@ -9,7 +9,7 @@ import std.format : format;
 
 class Computer
 {
-    this(ComputerModel model, ComponentFactory factory)
+    this(const ComputerModel model, ComponentFactory factory)
     {
         _model = model;
         _processingUnit = factory.createProcessingUnit(
@@ -168,7 +168,7 @@ class Computer
 
     // --- Consultation ---
 
-    ComputerModel getModel() pure nothrow
+    const(ComputerModel) getModel() pure nothrow
     {
         return _model;
     }
@@ -179,7 +179,7 @@ class Computer
     }
 
 private:
-    ComputerModel _model;
+    const ComputerModel _model;
     ExecutionLog _log;
     ProcessingUnit _processingUnit;
     Memory _memory;
