@@ -49,7 +49,7 @@ class Computer
         auto computer = new Computer(model, new StandardComponentFactory());
 
         // dfmt off
-        InputMatrix[] inputs = [
+        const inputs = [
             new InputMatrix("A", Matrix.of([[1, 2], [3, 4]]),
                     AcquisitionMode.manual, "console"),
             new InputMatrix("B", Matrix.of([
@@ -150,13 +150,13 @@ class Computer
 
     Block swap(Block block, BlockCell cell1, BlockCell cell2)
     {
-        return _processingInstruction(Action.puSwap, "Échange entre deux cellules d'un bloc",
+        return _processingInstruction(Action.puSwap, "Echange entre deux cellules d'un bloc",
                 () => _processingUnit.swap(block, cell1, cell2));
     }
 
     BlockPair swap(Block block1, BlockCell cell1, Block block2, BlockCell cell2)
     {
-        return _processingInstruction(Action.puSwap, "Échange entre deux cellules de deux blocs",
+        return _processingInstruction(Action.puSwap, "Echange entre deux cellules de deux blocs",
                 () => _processingUnit.swap(block1, cell1, block2, cell2));
     }
 

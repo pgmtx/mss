@@ -8,7 +8,7 @@ import mss.core.matrix.block_position : BlockPosition;
 
 const class InputMatrix
 {
-    this(const string name, Matrix matrix, AcquisitionMode mode, const string source)
+    this(const string name, const Matrix matrix, AcquisitionMode mode, const string source)
     {
         _name = name;
         _matrix = matrix;

@@ -2,11 +2,8 @@ module mss.core.matrix.block;
 
 import mss.core.matrix.block_cell;
 
-immutable struct Block
+struct Block
 {
-    // Ces attributs sont immuables, il n'y a donc pas de problème à ce qu'ils soient publics.
-    // Cela ne rend pas la méthode `get` redondante puisqu'elle est nécessaire pour des opérations
-    // comme `swap` et `withCell`.
     long topLeft;
     long topRight;
     long bottomLeft;
