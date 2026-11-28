@@ -1,9 +1,11 @@
 module mss.execution.run_result;
 
 import mss.core.trace : ExecutionLog;
+import mss.core.error : MssException;
 import mss.execution.run_status;
+import optional : Optional;
 
-const class RunResult
+struct RunResult
 {
     this(const string planName, int planRevision, RunStatus status,
             ExecutionLog log, int lastCompletedStep) pure nothrow
@@ -13,6 +15,17 @@ const class RunResult
         _status = status;
         _log = log;
         _lastCompletedStep = lastCompletedStep;
+    }
+
+    this(const string planName, int planRevision, RunStatus status,
+            ExecutionLog log, int lastCompletedStep, MssException exception) pure nothrow
+    {
+        _planName = planName;
+        _planRevision = planRevision;
+        _status = status;
+        _log = log;
+        _lastCompletedStep = lastCompletedStep;
+        _exception = exception;
     }
 
     string getPlanName() const pure nothrow
@@ -46,4 +59,5 @@ private:
     RunStatus _status;
     ExecutionLog _log;
     int _lastCompletedStep;
+    Optional!MssException _exception;
 }
