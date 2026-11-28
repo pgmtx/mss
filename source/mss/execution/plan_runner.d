@@ -72,6 +72,7 @@ class PlanRunner
             // dfmt off
             return RunResult(
                 plan.getName(),
+                model.getName(),
                 plan.getRevision(),
                 RunStatus.incomplete,
                 computer.getLog(),
@@ -84,6 +85,7 @@ class PlanRunner
         // dfmt off
         return RunResult(
             plan.getName(),
+            model.getName(),
             plan.getRevision(),
             compliant ? RunStatus.done : RunStatus.nonCompliant,
             computer.getLog(),

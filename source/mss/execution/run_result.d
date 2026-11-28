@@ -7,20 +7,22 @@ import optional : Optional;
 
 struct RunResult
 {
-    this(const string planName, int planRevision, RunStatus status,
-            ExecutionLog log, int lastCompletedStep) pure nothrow
+    this(const string planName, const string computerName, int planRevision,
+            RunStatus status, ExecutionLog log, int lastCompletedStep) pure nothrow
     {
         _planName = planName;
+        _computerName = computerName;
         _planRevision = planRevision;
         _status = status;
         _log = log;
         _lastCompletedStep = lastCompletedStep;
     }
 
-    this(const string planName, int planRevision, RunStatus status,
-            ExecutionLog log, int lastCompletedStep, MssException exception) pure nothrow
+    this(const string planName, const string computerName, int planRevision,
+            RunStatus status, ExecutionLog log, int lastCompletedStep, MssException exception) pure nothrow
     {
         _planName = planName;
+        _computerName = computerName;
         _planRevision = planRevision;
         _status = status;
         _log = log;
@@ -53,8 +55,14 @@ struct RunResult
         return _lastCompletedStep;
     }
 
+    string getComputerName() const pure nothrow
+    {
+        return _computerName;
+    }
+
 private:
     string _planName;
+    string _computerName;
     int _planRevision;
     RunStatus _status;
     ExecutionLog _log;
