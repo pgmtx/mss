@@ -162,7 +162,7 @@ class Computer
 
     Block sum(Block block)
     {
-        return _processingInstruction(Action.puSwap, "Somme d'un bloc",
+        return _processingInstruction(Action.puSum, "Somme d'un bloc",
                 () => _processingUnit.sum(block));
     }
 
@@ -253,7 +253,10 @@ private:
 
 version (unittest)
 {
+    import mss.session;
     import mss.core.weight : ComponentModel, WeightTable;
+    import mss.impl.standard_component_factory;
+    import core.sys.bionic.err;
 
     private ComponentModel _testComponentModel(ComponentCategory category)
     {
@@ -303,4 +306,28 @@ version (unittest)
         }
         return new ComponentModel("TEST", new WeightTable(category, weights), true);
     }
+}
+
+unittest
+{
+    auto computer = new Computer(ord1, new StandardComponentFactory());
+    immutable result = computer.add(Block(1, 2, 3, 4), Block(5, 6, 7, 8));
+    assert(result == Block(6, 8, 10, 12));
+
+    immutable entries = computer.getLog().getEntries();
+    assert(entries.length == 2);
+    assert(entries[0].action == Action.puAdd);
+    assert(entries[0].total == 3);
+    assert(entries[1].action == Action.outTraceStep);
+    assert(entries[1].total == 4);
+}
+
+unittest
+{
+    import std.exception : assertThrown;
+    import mss.core.error : OverflowException;
+
+    auto computer = new Computer(ord1, new StandardComponentFactory());
+    assertThrown!OverflowException(computer.add(Block(long.max, 2, 3, 4), Block(1, 2, 3, 4)));
+    assert(computer.getLog().getEntries().length == 0);
 }
