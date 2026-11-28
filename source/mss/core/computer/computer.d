@@ -3,7 +3,7 @@ module mss.core.computer.computer;
 import mss.core.component;
 import mss.core.computer.computer_model;
 import mss.core.matrix;
-import mss.core.trace : ExecutionLog;
+import mss.core.trace : ExecutionLog, LogEntry, TraceStep;
 import mss.core.weight : Action, ComponentCategory, acquisition, storeMatrix, showMatrix;
 import std.format : format;
 
@@ -87,15 +87,23 @@ class Computer
 
     Block loadBlock(const string name, BlockPosition position)
     {
-        _logRecord(Action.memLoadBlock, format("Chargement du bloc %s%d%d",
-                name, position.row, position.column));
+        // scope (success) exécute ses instructions si aucune exception n'est
+        // levée.
+        scope (success)
+        {
+            _logRecord(Action.memLoadBlock, format("Chargement du bloc %s%d%d",
+                    name, position.row, position.column));
+        }
         return _memory.loadBlock(name, position);
     }
 
     void writeBlock(const string name, BlockPosition position, Block block)
     {
-        _logRecord(Action.memWriteBlock, format("Ecriture du bloc %s%d%d",
-                name, position.row, position.column));
+        scope (success)
+        {
+            _logRecord(Action.memWriteBlock, format("Ecriture du bloc %s%d%d",
+                    name, position.row, position.column));
+        }
         _memory.writeBlock(name, position, block);
     }
 
@@ -107,49 +115,55 @@ class Computer
     void showMatrix(const string name)
     {
         const matrix = readMatrix(name);
+        _outputController.showMatrix(name, matrix);
 
         // La syntaxe .showMatrix permet de distinguer entre la méthode courante
         // et la fonction définie pour une Action.
         _logRecord(.showMatrix(matrix.getSize()), "Affichage de " ~ name);
-        _outputController.showMatrix(name, matrix);
     }
 
     void showScalar(const string name, long value)
     {
-        _logRecord(Action.outScalar, "Affichage du scalaire " ~ name);
         _outputController.showScalar(name, value);
+        _logRecord(Action.outScalar, "Affichage du scalaire " ~ name);
     }
 
     // --- Instructions de l'UT ---
 
     Block add(Block a, Block b)
     {
-        return _processingUnit.add(a, b);
+        return _processingInstruction(Action.puAdd, "Addition de blocs",
+                () => _processingUnit.add(a, b));
     }
 
     Block substract(Block a, Block b)
     {
-        return _processingUnit.substract(a, b);
+        return _processingInstruction(Action.puSubstract,
+                "Soustraction de blocs", () => _processingUnit.substract(a, b));
     }
 
     Block multiply(Block a, Block b)
     {
-        return _processingUnit.multiply(a, b);
+        return _processingInstruction(Action.puMultiply,
+                "Multiplication de blocs", () => _processingUnit.multiply(a, b));
     }
 
     Block swap(Block block, BlockCell cell1, BlockCell cell2)
     {
-        return _processingUnit.swap(block, cell1, cell2);
+        return _processingInstruction(Action.puSwap, "Échange entre deux cellules d'un bloc",
+                () => _processingUnit.swap(block, cell1, cell2));
     }
 
     BlockPair swap(Block block1, BlockCell cell1, Block block2, BlockCell cell2)
     {
-        return _processingUnit.swap(block1, cell1, block2, cell2);
+        return _processingInstruction(Action.puSwap, "Échange entre deux cellules de deux blocs",
+                () => _processingUnit.swap(block1, cell1, block2, cell2));
     }
 
     Block sum(Block block)
     {
-        return _processingUnit.sum(block);
+        return _processingInstruction(Action.puSwap, "Somme d'un bloc",
+                () => _processingUnit.sum(block));
     }
 
     // --- Consultation ---
@@ -172,9 +186,9 @@ private:
     InputManager _inputManager;
     OutputController _outputController;
 
-    void _logRecord(Action action, const string context)
+    LogEntry _logRecord(Action action, const string context)
     {
-        _log.record(action, _model.getModel(_getCategoryFromAction(action)), context);
+        return _log.record(action, _model.getModel(_getCategoryFromAction(action)), context);
     }
 
     ComponentCategory _getCategoryFromAction(Action action) const pure nothrow
@@ -213,9 +227,27 @@ private:
         }
     }
 
-    void _processingInstruction()
+    Block _processingInstruction(Action action, const string label, Block delegate() operation)
     {
-        // placeholder
+        immutable result = operation();
+        immutable computation = _logRecord(action, label);
+        immutable display = _logRecord(Action.outTraceStep, "Suivi : " ~ label);
+        immutable step = TraceStep(_model.getName(), label, [result], computation, display);
+        _outputController.showTraceStep(step);
+        return result;
+    }
+
+    BlockPair _processingInstruction(Action action, const string label,
+            BlockPair delegate() operation)
+    {
+        immutable result = operation();
+        immutable computation = _logRecord(action, label);
+        immutable display = _logRecord(Action.outTraceStep, "Suivi : " ~ label);
+        immutable step = TraceStep(_model.getName(), label, [
+            result.first, result.second
+        ], computation, display);
+        _outputController.showTraceStep(step);
+        return result;
     }
 }
 

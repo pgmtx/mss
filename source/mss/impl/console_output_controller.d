@@ -29,9 +29,10 @@ class ConsoleOutputController : OutputController
         writefln("%s | %s | %s", step.computer, step.label, step.computation.context);
         foreach (i, result; step.results)
         {
-            writefln("Résultat %d : %s", i + 1, result);
+            // On évite les accents car les terminaux Windows ne les affiche pas correctement.
+            writefln("Resultat %d : %s", i + 1, result);
         }
-        writefln("Calcul UT%d : +%d | Cumul après calcul : %d",
+        writefln("Calcul UT%d : +%d | Cumul apres calcul : %d",
                 step.computation.number, step.computation.weight, step.computation.total);
         writefln("Affichage du suivi SOR%d : +%d | Cumul : %d",
                 step.display.number, step.display.weight, step.display.total);
