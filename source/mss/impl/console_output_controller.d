@@ -29,7 +29,7 @@ class ConsoleOutputController : OutputController
         writefln("%s | %s | %s", step.computer, step.label, step.computation.context);
         foreach (i, result; step.results)
         {
-            // On évite les accents car les terminaux Windows ne les affiche pas correctement.
+            // On évite les accents car les terminaux Windows ne les affichent pas correctement.
             writefln("Resultat %d : %s", i + 1, result);
         }
         writefln("Calcul UT%d : +%d | Cumul apres calcul : %d",
@@ -40,12 +40,13 @@ class ConsoleOutputController : OutputController
 
     override void showMatrix(const string name, const Matrix matrix)
     {
-        // placeholder
+        writeln("Matrice ", name, " :");
+        writeln(matrix);
     }
 
     override void showScalar(const string name, long value)
     {
-        // placeholder
+        writefln("Scalaire %s : %d", name, value);
     }
 
     override ComponentModel getModel() const

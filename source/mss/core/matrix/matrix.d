@@ -173,7 +173,15 @@ class Matrix
     {
         import std.conv : to;
 
-        return to!string(_values);
+        string result = "[";
+        foreach (i, row; _values)
+        {
+            if (i > 0)
+                result ~= "\n ";
+            result ~= to!string(row);
+        }
+        result ~= ']';
+        return result;
     }
 
 private:
